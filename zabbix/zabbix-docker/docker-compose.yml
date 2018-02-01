@@ -1,0 +1,54 @@
+zabbix_web_nginx:
+    restart: always
+    image: docker.io/zabbix/zabbix-web-nginx-mysql
+    container_name: zabbix_web_nginx
+    volumes:
+        - ./ttf/DejaVuSans.ttf:/usr/share/fonts/ttf-dejavu/DejaVuSans.ttf
+    privileged: true
+    links:
+        - zabbix_mysql
+        - zabbix_server
+    ports:
+        - "8050:80"
+    environment:
+        - DB_SERVER_HOST=zabbix_mysql
+        - DB_SERVER_PORT=3306
+        - MYSQL_USER=zabbix
+        - MYSQL_PASSWORD=zabbix
+        - ZBX_SERVER_HOST=zabbix_server:10051
+        - PHP_TZ=Asia/Shanghai
+    
+zabbix_server:
+    restart: always
+    image: docker.io/zabbix/zabbix-server-mysql
+    container_name: zabbix_server
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./script/mail.sh:/usr/lib/zabbix/alertscripts/mail.sh
+    privileged: true
+    links:
+        - zabbix_mysql
+    ports:
+        - "15051:10051"
+    environment:
+        - DB_SERVER_HOST=zabbix_mysql
+        - DB_SERVER_PORT=3306
+        - MYSQL_USER=zabbix
+        - MYSQL_PASSWORD=zabbix
+        - PHP_TZ=Asia/Shanghai 
+
+zabbix_mysql:
+    restart: always
+    image: mysql
+    container_name: zabbix_mysql
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - /data/mysql/:/var/lib/mysql
+    privileged: true
+    ports:
+        - "53306:3306"
+    environment:
+        - MYSQL_ROOT_PASSWORD=mysql
+        - TZ=Asia/Shanghai
+    command:
+         --character-set-server=utf8 --collation-server=utf8_general_ci

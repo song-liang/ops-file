@@ -1,0 +1,11 @@
+server_web:
+    restart: always
+    image: nginx
+    volumes:
+        - ./nginx_proxy.conf:/etc/nginx/conf.d/default.conf
+        - ./nginx.conf:/etc/nginx/nginx.conf
+        - ./logs:/var/log/nginx/
+    privileged: true
+    ports:
+        - "80:80"
+

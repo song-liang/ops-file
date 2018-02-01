@@ -1,0 +1,14 @@
+zabbix-agent:
+    restart: always
+    image: zabbix/zabbix-agent
+    container_name: zabbix-agent
+    ports:
+      - "10050:10050"
+    volumes:
+      - /usr/local/zabbix/conf/zabbix-agentd.conf:/etc/zabbix_agentd.conf
+      - /proc:/data/proc
+      - /sys:/data/sys
+      - /dev:/data/dev
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - ZABBIX_SERVER=192.168.100.3
