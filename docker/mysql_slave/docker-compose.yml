@@ -4,6 +4,7 @@ mysql:
     container_name: mysql_slave
     volumes:
         - /etc/localtime:/etc/localtime:ro
+        - /usr/share/zoneinfo:/usr/share/zoneinfo:ro
         - ./data/:/var/lib/mysql
         - ./my.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
     privileged: true

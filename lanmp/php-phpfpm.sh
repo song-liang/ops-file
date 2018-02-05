@@ -7,7 +7,7 @@
 ##php版本5.4，5.6，7.0，下载失败，请修改下载链接
 
 php_5_4=http://cn2.php.net/distributions/php-5.4.45.tar.gz
-php_5_6=http://cn2.php.net/distributions/php-5.6.20.tar.gz
+php_5_6=http://cn2.php.net/distributions/php-5.6.33.tar.gz
 php_7_0=http://cn2.php.net/distributions/php-7.0.5.tar.gz
 
 ##选择PHP OR php-fpm
@@ -134,7 +134,7 @@ phpfpm_configure () {
     --disable-ipv6 \
     --with-pear \
     --with-curl \
-    --with-openssl
+    --with-openssl 
 	check_ok
     make && make install
     check_ok		
