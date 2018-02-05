@@ -1,0 +1,31 @@
+nginx:
+    image: nginx
+    restart: always
+    container_name: nginx
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./nginx-conf/nginx.conf:/etc/nginx/nginx.conf
+        - ./nginx-conf/conf.d:/etc/nginx/conf.d
+        - ./logs/:/var/log/nginx/
+        - ./www:/www
+    ports:
+        - "81:80"
+    links:
+        - php:php_fpm
+    ulimits:
+        nproc: 65535
+    hostname: nginx
+    mem_limit: 1024m
+    
+php:
+    image: php:5.6-fpm
+    restart: always
+    container_name: php_fpm
+    volumes:
+        - ./php-conf/www.conf:/usr/local/etc/php-fpm.d/www.conf
+        - ./www:/var/www/html
+    expose:
+        - "9000"
+    ulimits:
+        nproc: 65535
+    hostname: php_fpm
