@@ -22,7 +22,9 @@ php:
     restart: always
     container_name: php_fpm
     volumes:
-        - ./php-conf/www.conf:/usr/local/etc/php-fpm.d/www.conf
+        - /etc/localtime:/etc/localtime:ro
+        - ./php-fpm/php.conf.d:/usr/local/etc/php/conf.d
+        - ./php-fpm/php-fpm.d:/usr/local/etc/php-fpm.d
         - ./www:/var/www/html
     expose:
         - "9000"
