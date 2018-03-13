@@ -6,10 +6,10 @@
 ##
 ##httpd 2.2，2.4，下载失败请修改下载链接
 
-httpd_2_2=http://mirrors.sohu.com/apache/httpd-2.2.31.tar.gz
+httpd_2_2=http://mirrors.sohu.com/apache/httpd-2.2.34.tar.gz
 httpd_2_4=http://mirrors.sohu.com/apache/httpd-2.4.25.tar.gz
-apr=http://mirrors.cnnic.cn/apache/apr/apr-1.5.2.tar.gz
-apr_util=http://mirrors.cnnic.cn/apache/apr/apr-util-1.5.4.tar.gz
+apr=http://mirrors.cnnic.cn/apache/apr/apr-1.6.3.tar.gz
+apr_util=http://mirrors.cnnic.cn/apache/apr/apr-util-1.6.1.tar.gz
 
 ##选择版本
 while :
