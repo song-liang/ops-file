@@ -1,0 +1,8 @@
+svn-server:
+        restart: always
+        image: svn-server
+        container_name: svn-server
+        volumes:
+           - /home/svn:/var/opt/svn
+        ports:
+           - "3690:3690"     
