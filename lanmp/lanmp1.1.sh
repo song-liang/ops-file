@@ -61,7 +61,7 @@ if ls /etc/yum.repos.d/epel-6.repo* >/dev/null 2>&1
 then
     rm -f /etc/yum.repos.d/epel-6.repo*
 fi
-wget -P /etc/yum.repos.d/ http://mirrors.aliyun.com/repo/epel-6.repo
+wget -P /etc/yum.repos.d/ http://mirrors.aliyun.com/repo/epel-7.repo
 
 killall mysqld httpd nginx phpfp  >/dev/null 2>&1
 
@@ -75,7 +75,7 @@ apr_util=http://mirrors.cnnic.cn/apache/apr/apr-util-1.6.1.tar.gz
 php_5_4=http://cn2.php.net/distributions/php-5.4.45.tar.gz
 php_5_6=http://cn2.php.net/distributions/php-5.6.33.tar.gz
 php_7_0=http://cn2.php.net/distributions/php-7.0.5.tar.gz
-nginx_1_8=http://nginx.org/download/nginx-1.8.0.tar.gz
+nginx_1_12=http://nginx.org/download/nginx-1.12.0.tar.gz
 
 ##function of installing mysqld.
 ##mysql5.6之前版本编译配置函数
@@ -332,9 +332,9 @@ echo "LAMP done Please use 'http://your ip/index.php' to access."
 ##function of install nginx
 install_nginx() {
 cd /usr/local/src
-[ -f ${nginx_1_8##*/} ] || wget $nginx_1_8
-tar zxvf ${nginx_1_8##*/}
-cd `echo ${nginx_1_8##*/}|sed 's/.tar.gz//g'`
+[ -f ${nginx_1_12##*/} ] || wget $nginx_1_12
+tar zxvf ${nginx_1_12##*/}
+cd `echo ${nginx_1_12##*/}|sed 's/.tar.gz//g'`
 myum pcre-devel
 ./configure \
 --prefix=/usr/local/nginx \
