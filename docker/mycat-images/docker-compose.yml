@@ -4,6 +4,7 @@ mycat:
     container_name: mycat
     volumes:
         - /etc/localtime:/etc/localtime:ro
+        - /etc/timezone:/etc/timezone:ro
         - ./conf/:/mycat/conf/:ro
         - ./logs/:/mycat/logs/:rw
     ports:
