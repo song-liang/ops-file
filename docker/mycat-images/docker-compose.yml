@@ -1,12 +1,12 @@
 mycat:
-    build: mycat
+    build: ./
     restart: always
     container_name: mycat
     volumes:
         - /etc/localtime:/etc/localtime:ro
         - /etc/timezone:/etc/timezone:ro
-        - ./conf/:/mycat/conf/:ro
-        - ./logs/:/mycat/logs/:rw
+        - ./conf:/mycat/conf:ro
+        - ./logs:/mycat/logs:rw
     ports:
         - "8066:8066"
         - "9066:9066"
