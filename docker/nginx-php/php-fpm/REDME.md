@@ -1,0 +1,1 @@
+dpkg-reconfigure locales    选择配置中文
