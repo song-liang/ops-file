@@ -4,6 +4,7 @@ nginx:
     container_name: nginx
     volumes:
         - /etc/localtime:/etc/localtime:ro
+        - /etc/timezone:/etc/timezone:ro
         - ./nginx-conf/nginx.conf:/etc/nginx/nginx.conf
         - ./nginx-conf/conf.d:/etc/nginx/conf.d
         - ./logs/:/var/log/nginx/
@@ -15,16 +16,18 @@ nginx:
     ulimits:
         nproc: 65535
     hostname: nginx
-    mem_limit: 1024m
+    #mem_limit: 1024m
     
 php:
-    image: php:5.6-fpm
+    image: php-fpm
     restart: always
     container_name: php_fpm
     volumes:
         - /etc/localtime:/etc/localtime:ro
-        - ./php-fpm/php.conf.d:/usr/local/etc/php/conf.d
+        - /etc/timezone:/etc/timezone:ro
+        #- ./php-fpm/php.conf.d:/usr/local/etc/php/conf.d
         - ./php-fpm/php-fpm.d:/usr/local/etc/php-fpm.d
+        - ./php-fpm/php.ini:/usr/local/etc/php/php.ini
         - ./www:/var/www/html
     expose:
         - "9000"
