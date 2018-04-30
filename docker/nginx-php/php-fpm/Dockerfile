@@ -4,7 +4,6 @@ FROM php:5.6-fpm
 MAINTAINER <song-liangliang@qq.com>
 LABEL Description="php-fpm:5.6"
 
-
 RUN apt-get update && apt-get install -y \
       libfreetype6-dev \
       libjpeg62-turbo-dev \
@@ -21,4 +20,12 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install gettext \
     && docker-php-ext-install bcmath \
     && docker-php-ext-install sockets \
-    && docker-php-ext-install ldap
+    && docker-php-ext-install ldap \
+    && sed -i -e 's/# zh_CN.UTF-8 UTF-8/zh_CN.UTF-8 UTF-8/' /etc/locale.gen \
+    && locale-gen \
+    && update-locale LANG=zh_CN.UTF-8
+
+ENV LANG=zh_CN.UTF-8 \
+    LANGUAGE=zh_CN.UTF-8 \
+    LC_ALL=zh_CN.UTF-8
+
