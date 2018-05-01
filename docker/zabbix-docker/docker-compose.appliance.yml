@@ -9,6 +9,7 @@ zabbix_appliance:
     container_name: zabbix_appliance
     volumes:
         - ./ttf/DejaVuSans.ttf:/usr/share/fonts/ttf-dejavu/DejaVuSans.ttf
+        - ./data:/var/lib/mysql
     privileged: true
     ports:
         - "80:80"
