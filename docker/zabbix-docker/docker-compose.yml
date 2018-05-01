@@ -1,3 +1,7 @@
+##官方镜像https://hub.docker.com/u/zabbix/
+## songliang
+## 2018.5.1
+
 version: '3.1'
 
 networks:
@@ -83,7 +87,7 @@ services:
     #links:
     #    - zabbix_server
     #ports:
-    #    - "8050:80"
+    #    - "10050:10050"
     environment:
         - ZBX_HOSTNAME=Zabbix server
         - ZBX_SERVER_HOST=zabbix_server

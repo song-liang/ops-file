@@ -1,0 +1,19 @@
+##Zabbix appliance with MySQL database support and Nginx web-server
+##https://hub.docker.com/r/zabbix/zabbix-appliance/
+## songliang
+## 2018.5.1
+
+zabbix_appliance:
+    restart: always
+    image: docker.io/zabbix/zabbix-appliance
+    container_name: zabbix_appliance
+    volumes:
+        - ./ttf/DejaVuSans.ttf:/usr/share/fonts/ttf-dejavu/DejaVuSans.ttf
+    privileged: true
+    ports:
+        - "80:80"
+        - "10051:10051"
+    environment:
+        - ZBX_SERVER_HOST=zabbix_server
+        - PHP_TZ=Asia/Shanghai
+    
