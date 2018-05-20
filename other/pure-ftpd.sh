@@ -59,7 +59,7 @@ MaxClientsPerIP               8          #同一IP允许同时连接的用户数
 VerboseLog                    no         #如果你要记录所有的客户命令，设置这个指令为 "yes"
 DisplayDotFiles               yes        #即使客户端没有发送 '-a' 选项也列出隐藏文件( dot-files 
 AnonymousOnly                 no         #不允许认证用户 - 仅作为一个公共的匿名FTP
-NoAnonymous                   no         #不允许匿名连接，仅允许认证用户使用
+NoAnonymous                   yes         #不允许匿名连接，仅允许认证用户使用
 SyslogFacility                ftp        #缺省的功能( facility 是 "ftp"。 "none" 将禁止日志
 DontResolve                   yes        #在日志文件中不解析主机名。日志没那么详细的话，就使用更少的带宽。在一个访问量很大的站点中，设置这个指令为 "yes" ，如果你没有一个能工作的DNS的话
 MaxIdleTime                   15         #客户端允许的最大的空闲时间（分钟，缺省15分钟）
