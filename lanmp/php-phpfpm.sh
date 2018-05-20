@@ -7,7 +7,7 @@
 ##php版本5.4，5.6，7.0，下载失败，请修改下载链接
 
 php_5_4=http://cn2.php.net/distributions/php-5.4.45.tar.gz
-php_5_6=http://cn2.php.net/distributions/php-5.6.33.tar.gz
+php_5_6=http://mirrors.sohu.com/php/php-5.6.36.tar.gz
 php_7_0=http://cn2.php.net/distributions/php-7.0.5.tar.gz
 
 ##选择PHP OR php-fpm
@@ -51,10 +51,12 @@ else
 fi
 }
 
-for p in gcc wget vim  perl perl-devel libaio libaio-devel pcre-devel zlib-devel
+for p in gcc wget vim  perl perl-devel libaio libaio-devel pcre-devel zlib-devel openldap openldap-devel
 do
     myum $p
 done
+
+ln -s /usr/lib64/libldap* /usr/lib/
 
 ##php编译配置
 php_configure () {
@@ -116,6 +118,8 @@ phpfpm_configure () {
     --with-fpm-user=php-fpm \
     --with-fpm-group=php-fpm \
     --with-mysql=/usr/local/mysql \
+    --with-mysqli=/usr/local/mysql/bin/mysql_config \
+    --with-pdo-mysql \
     --with-mysql-sock=/tmp/mysql.sock \
     --with-libxml-dir \
     --with-gd \
@@ -125,17 +129,24 @@ phpfpm_configure () {
     --with-iconv-dir \
     --with-zlib-dir \
     --with-mcrypt \
+    --with-gettext \
+    --with-ldap \
+    --enable-pdo \
+    --enable-pcntl \
+    --enable-zip \
+    --enable-shmop \
+    --enable-bcmath \
     --enable-soap \
     --enable-gd-native-ttf \
     --enable-ftp \
     --enable-mbstring \
     --enable-exif \
-    --enable-zend-multibyte \
     --disable-ipv6 \
     --with-pear \
     --with-curl \
     --with-openssl 
 	check_ok
+	sed -i 's|^EXTRA_LIBS =|& -llber |g' Makefile
     make && make install
     check_ok		
 }
@@ -207,7 +218,7 @@ then
         check_ok
      fi
     [ -f /usr/local/php-fpm/etc/php-fpm.conf ] || curl http://www.apelearn.com/study_v2/.phpfpm_conf -o /usr/local/php-fpm/etc/php-fpm.conf
-    [ -f /etc/init.d/phpfpm ] || /bin/cp sapi/fpm/init.d.php-fpm /etc/init.d/phpfpm
+    [ -f /etc/init.d/phpfpm ] || /bin/cp sapi/fpm/php-fpm /etc/init.d/phpfpm
     chmod 755 /etc/init.d/phpfpm
     chkconfig phpfpm on
     service phpfpm start

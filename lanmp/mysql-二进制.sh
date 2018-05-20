@@ -3,7 +3,7 @@
 ar=`arch`
 dat=`date +%F-%H-%M`
 mysql_5_1=http://mirrors.sohu.com/mysql/MySQL-5.1/mysql-5.1.72-linux-$ar-glibc23.tar.gz
-mysql_5_6=http://mirrors.sohu.com/mysql/MySQL-5.6/mysql-5.6.33-linux-glibc2.5-$ar.tar.gz
+mysql_5_6=http://mirrors.sohu.com/mysql/MySQL-5.6/mysql-5.6.36-linux-glibc2.5-$ar.tar.gz
 mysql_5_7=http://mirrors.sohu.com/mysql/MySQL-5.7/mysql-5.7.13-linux-glibc2.5-$ar.tar.gz
 
 ##选择版本
@@ -38,7 +38,7 @@ fi
 
 ## install some packges.
 echo install some packges
-for p in gcc wget vim  perl perl-devel libaio libaio-devel pcre-devel zlib-devel
+for p in gcc wget vim perl perl-devel libaio libaio-devel pcre-devel zlib-devel autoconf
 do
     myum $p
 done
