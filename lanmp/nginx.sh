@@ -18,7 +18,7 @@ then
 fi
 }
 
-yum install -y libaio library cmake glibc gcc zlib-devel pcre pcre-devel
+yum install -y libaio library cmake glibc gcc zlib-devel pcre pcre-devel openssl openssl-devel
 
 ##函数:编译安装与配置
 nginx_configure () {
@@ -28,6 +28,7 @@ nginx_configure () {
 	--with-http_sub_module \
 	--with-http_gzip_static_module \
 	--with-http_stub_status_module  \
+	--with-http_ssl_module \
 	--with-pcre \
 	--with-stream
 	check_ok
