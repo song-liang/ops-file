@@ -2,7 +2,7 @@
 ## 个人学习
 
 ## 目录
-```
+```text
 ├──docker 
 │      ├── jdk-images              # java jdk镜像构建
 │      ├── mycat-images            # mycat 镜像构建
