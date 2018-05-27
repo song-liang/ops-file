@@ -9,7 +9,8 @@ FROM centos
 # File Author / Maintainer
 MAINTAINER songliangliang <songliangliang@istarfinancial.cn>
 
-ENV JAVA_HOME=/usr/local/java \
+ENV TERM=xterm \
+    JAVA_HOME=/usr/local/java \
     JAVA_BIN=/usr/local/java/bin \
     JRE_HOME=/usr/local/java/jre \
     PATH=$PATH:/usr/local/java/bin:/usr/local/java/jre/bin \
