@@ -1,0 +1,3 @@
+wwwwroot\www.gisera.com\gisera\databases
+wwwwroot\spark.mapgis.com\databases
+wwwwroot\contest.gisera.com\2016data

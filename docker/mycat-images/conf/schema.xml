@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE mycat:schema SYSTEM "schema.dtd">
+<mycat:schema xmlns:mycat="http://io.mycat/">
+	<!-- 一个schema定义一个MyCat的逻辑库 -->
+	<schema name="TESTDB" checkSQLschema="false" sqlMaxLimit="100" dataNode="dn1">
+		</schema>
+    <schema name="test" checkSQLschema="false" sqlMaxLimit="100" dataNode="dn2">
+        </schema>
+	
+	<!-- 定义MyCat的后端数据节点,和库名 -->
+	<dataNode name="dn1" dataHost="localhost1" database="db1" />
+	<dataNode name="dn2" dataHost="localhost1" database="test" />
+	
+	<!-- 
+	balance="2" 		所有节点参与负载均衡读，
+	switchType="2"  	根据主从状态自动切换
+	slaveThreshold="10" 自动切换主从延迟超时时间
+	<heartbeat> 		主从切换检查语句
+	-->
+	<dataHost name="localhost1" maxCon="1000" minCon="10" balance="2"
+			  writeType="0" dbType="mysql" dbDriver="native" switchType="2"  slaveThreshold="10">
+		<heartbeat>show slave status</heartbeat>
+		
+		<!-- can have multi write hosts -->
+		<writeHost host="hostM1" url="192.168.0.205:3306" user="root"  password="mysql">
+			<!-- can have multi read hosts -->
+			<readHost host="hostS2" url="192.168.0.203:3306" user="root" password="mysql" />
+		</writeHost>
+
+		<!-- <writeHost host="hostM2" url="localhost:3316" user="root" password="123456"/> -->
+	</dataHost>
+
+</mycat:schema>

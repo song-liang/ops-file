@@ -1,0 +1,21 @@
+version: '3.2'
+services:
+ stock:
+    restart: always
+    image: tomcat:8.5
+    container_name: stock
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - /etc/timezone:/etc/timezone:ro
+        #- ./server.xml:/usr/local/tomcat/conf/server.xml
+        #- ./conf:/usr/local/tomcat/conf
+        - ./stock:/usr/local/tomcat/webapps/stock
+        - ./log:/usr/local/tomcat/logs
+    privileged: true
+    ports:
+        - "8080:8080"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
+        max-file: "10"
