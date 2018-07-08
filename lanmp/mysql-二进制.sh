@@ -60,6 +60,8 @@ mysql_configure () {
     /bin/cp support-files/my-default.cnf /etc/my.cnf
     check_ok
     sed -i '/^\[mysqld\]$/a\datadir = /data/mysql' /etc/my.cnf
+    sed -i '/^\[mysqld\]$/a\basedir = /usr/local/mysql' /etc/my.cnf
+    sed -i '/^\[mysqld\]$/a\character-set-server = utf8' /etc/my.cnf
     /bin/cp support-files/mysql.server /etc/init.d/mysqld
     sed -i 's#^datadir=#datadir=/data/mysql#' /etc/init.d/mysqld
     chmod 755 /etc/init.d/mysqld
