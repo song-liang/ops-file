@@ -7,7 +7,7 @@
 ##php版本5.4，5.6，7.0，下载失败，请修改下载链接
 
 php_5_4=http://cn2.php.net/distributions/php-5.4.45.tar.gz
-php_5_6=http://mirrors.sohu.com/php/php-5.6.36.tar.gz
+php_5_6=http://cn.php.net/distributions/php-5.6.37.tar.gz
 php_7_0=http://cn2.php.net/distributions/php-7.0.5.tar.gz
 
 ##选择PHP OR php-fpm

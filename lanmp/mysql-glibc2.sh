@@ -2,9 +2,9 @@
 
 ar=`arch`
 dat=`date +%F-%H-%M`
-mysql_5_1=http://mirrors.sohu.com/mysql/MySQL-5.1/mysql-5.1.72-linux-$ar-glibc23.tar.gz
-mysql_5_6=http://mirrors.sohu.com/mysql/MySQL-5.6/mysql-5.6.36-linux-glibc2.5-$ar.tar.gz
-mysql_5_7=http://mirrors.sohu.com/mysql/MySQL-5.7/mysql-5.7.13-linux-glibc2.5-$ar.tar.gz
+mysql_5_1=http://mirrors.163.com/mysql/Downloads/MySQL-5.1/mysql-5.1.72-linux-$ar-glibc23.tar.gz
+mysql_5_6=http://mirrors.163.com/mysql/Downloads/MySQL-5.6/mysql-5.6.41-linux-glibc2.12-$ar.tar.gz
+mysql_5_7=http://mirrors.163.com/mysql/Downloads/MySQL-5.7/mysql-5.7.13-linux-glibc2.5-$ar.tar.gz
 
 ##选择版本
 while :
