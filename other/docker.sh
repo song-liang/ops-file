@@ -4,6 +4,8 @@
 wget -O /etc/yum.repos.d/docker-ce.repo  https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 
 yum install -y docker-ce
+yum -y install epel-release python-pip && pip install --upgrade pip
+pip install docker-compose 
 
 mkdir -p /home/docker && ln -s /home/docker /var/lib
 
