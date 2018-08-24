@@ -1,0 +1,46 @@
+version: '3.0'
+services:
+ mysql:
+    restart: always
+    image: mysql:5.7
+    container_name: mysql
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - /usr/share/zoneinfo:/usr/share/zoneinfo:ro
+        - ./mysql:/var/lib/mysql
+        #- ./my.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+    privileged: true
+    network_mode: "host"
+    ports:
+        - "3306:3306"
+    environment:
+        - MYSQL_ROOT_PASSWORD=jumpserver
+        #- MYSQL_USER=admin 
+        #- MYSQL_PASSWORD=admin
+        - TZ=Asia/Shanghai
+    command:
+         --character-set-server=utf8 --collation-server=utf8_general_ci
+
+ redis:
+    restart: always
+    image: redis:4
+    container_name: redis
+    privileged: true
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./redis:/data
+        - ./conf/redis.conf:/usr/local/etc/redis/redis.conf
+    network_mode: "host"
+    ports:
+        - "6379:6379"
+    #environment:
+    #    - requirepass=jumpserver
+    #    - appendonly=yes
+    command:
+       redis-server /usr/local/etc/redis/redis.conf
+    logging:
+       driver: "json-file"
+       options:
+           max-size: "10M"
+           max-file: "5"
+    #

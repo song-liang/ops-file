@@ -1,0 +1,23 @@
+version: '3.0'
+services:
+ jumpserver:
+    restart: always
+    image: jumpserver-env
+    container_name: jumpserver
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - /usr/share/zoneinfo:/usr/share/zoneinfo:ro
+        - ./:/opt/jumpserver
+        #- ./data:/opt/jumpserver/data
+    privileged: true
+    network_mode: "host"
+    ports:
+        - "3306:3306"
+    #environment:
+    #    - MYSQL_ROOT_PASSWORD=jumpserver
+        #- MYSQL_USER=admin 
+        #- MYSQL_PASSWORD=admin
+        #- TZ=Asia/Shanghai
+    command:
+         /opt/jumpserver/jms start
+
