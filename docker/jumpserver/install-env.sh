@@ -20,3 +20,13 @@ mkdir temp && mv *.zip temp
 
 ## 构建python环境镜像
 docker build -t jumpserver-env .
+## 拉取guacamole镜像
+docker pull jumpserver/guacamole:latest
+
+##
+cp coco/conf_example.py coco/conf.py
+cp jumpserver/config_example.py jumpserver/config.py
+
+
+## 创建表结构，初始化数据库
+docker run --rm -v $PWD/jumpserver:/jumpserver --net="host" jumpserver-env sh -c "cd /jumpserver/utils/ && bash make_migrations.sh"
