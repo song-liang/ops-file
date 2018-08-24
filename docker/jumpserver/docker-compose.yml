@@ -24,12 +24,13 @@ services:
  coco:
     restart: always
     image: jumpserver-env
-    container_name: coco
+    container_name: jms_coco
     privileged: true
     volumes:
         - /etc/localtime:/etc/localtime:ro
         - /usr/share/zoneinfo:/usr/share/zoneinfo:ro
         - ./coco:/opt/coco
+        - ./coco/logs:/opt/coco/logs
     network_mode: "host"
     ports:
         - "2222:2222"
