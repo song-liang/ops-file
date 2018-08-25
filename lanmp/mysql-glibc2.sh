@@ -9,12 +9,12 @@ mysql_5_7=http://mirrors.163.com/mysql/Downloads/MySQL-5.7/mysql-5.7.13-linux-gl
 ##选择版本
 while :
 do
-read -p "Please chose the version of mysql. (5.1|5.6|5.7)" mysql_v
-   if [ "$mysql_v" == "5.1" -o "$mysql_v" == "5.6" -o "$mysql_v" == "5.7" ]
+read -p "Please chose the version of mysql. (5.1|5.6|5.7|5.8)" mysql_v
+   if [ "$mysql_v" == "5.1" -o "$mysql_v" == "5.6" -o "$mysql_v" == "5.7" -o "$mysql_v" == "8.0"]
    then
 	break
    else
-	echo "only 1(5.1) or 2(5.6) 3(5.7)"
+	echo "only 1(5.1) or 2(5.6) 3(5.7) 4(8.0)"
    fi
 done
 
@@ -83,9 +83,10 @@ mysql_conf_new () {
     mkdir -p /data/mysql
     chown -R mysql:mysql /data/mysql
     cd /usr/local/mysql
-##初始化，--initialize-insecure为不生成初始密码，--initialize为生存初始密码
+	##初始化，--initialize-insecure为不生成初始密码，--initialize为生存初始密码
 	./bin/mysqld  --initialize-insecure --user=mysql --datadir=/data/mysql
 	check_ok
+	## 加密数据文件
 	./bin/mysql_ssl_rsa_setup --datadir=/data/mysql
 	check_ok
 	cp support-files/my-default.cnf  /etc/my.cnf
@@ -108,7 +109,6 @@ case $mysql_v in
        [ -d /usr/local/mysql ] && /bin/mv /usr/local/mysql /usr/local/mysql_old_$dat
        mv `echo ${mysql_5_1##*/}|sed 's/.tar.gz//g'` /usr/local/mysql
        check_ok
-
        mysql_configure
        ;;
     5.6)
@@ -118,9 +118,8 @@ case $mysql_v in
        check_ok
        [ -d /usr/local/mysql ] && /bin/mv /usr/local/mysql /usr/local/mysql_old_$dat
         mv `echo ${mysql_5_6##*/}|sed 's/.tar.gz//g'` /usr/local/mysql
-
-	    mysql_configure
-		;;
+        mysql_configure
+        ;;
     5.7)
        cd /usr/local/src
        [ -f  ${mysql_5_7##*/} ] || wget $mysql_5_7
@@ -128,11 +127,10 @@ case $mysql_v in
        check_ok
        [ -d /usr/local/mysql ] && /bin/mv /usr/local/mysql /usr/local/mysql_old_$dat
        mv `echo ${mysql_5_7##*/}|sed 's/.tar.gz//g'` /usr/local/mysql
-
        mysql_conf_new
        ;;
      *)
-       echo "only 1(5.1) or 2(5.6) or (5.7)"
+       echo "only 1(5.1) or 2(5.6) or (5.7) or (8.0)"
        ;;
 esac
 
