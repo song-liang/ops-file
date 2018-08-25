@@ -28,8 +28,10 @@ RUN wget https://www.python.org/ftp/python/3.6.6/Python-3.6.6.tar.xz \
 
 ## 安装rpm python环境依赖
 COPY requirements requirements
-RUN yum -y install $(cat requirements/rpm_requirements.txt)
+RUN yum -y install $(cat requirements/rpm_requirements.txt) && yum clean all
 RUN pip3 install --upgrade pip
 RUN	pip3 install -ihttps://pypi.douban.com/simple/ -r requirements/jumpserver_requirements.txt
-RUN	pip3 install -ihttps://pypi.douban.com/simple/ -r requirements/coco_requirements.txt && rm -rf requirements
+RUN	pip3 install -ihttps://pypi.douban.com/simple/ -r requirements/coco_requirements.txt \
+    && rm -rf requirements \
+    && rm -rf /root/.cache
 
