@@ -16,7 +16,7 @@ fi
 
 ## jumpserver
 #git clone https://github.com/jumpserver/jumpserver.git && cd jumpserver && git checkout master
-if [ -e jumpserver ];then echo"jumpserver目录已存在"
+if [ -e jumpserver ];then echo "jumpserver目录已存在"
 else
     wget https://codeload.github.com/jumpserver/jumpserver/zip/master -O jumpserver.zip
     unzip jumpserver.zip
@@ -24,20 +24,27 @@ else
     cp jumpserver/config_example.py jumpserver/config.py
 fi
 
-## luna
-if [ -e luna ]; then echo"luna目录已存在"
+## jumpserver-luna
+if [ -e luna ]; then echo "luna目录已存在"
 else
-    wget https://codeload.github.com/jumpserver/luna/zip/1.4.0 -O luna-1.4.0.zip
-    unzip luna-1.4.0.zip
-    mv `unzip -l luna-1.4.0.zip | awk '{if(NR == 5){ print $4}}'` luna
+    wget https://github.com/jumpserver/luna/releases/download/1.4.0/luna.tar.gz
+    tar xvf luna.tar.gz
+    chown -R root:root luna
 fi
+
+## 镜像环境构建需求文件
+mkdir -p requirements \
+&& /usr/bin/cp -rf jumpserver/requirements/requirements.txt requirements/jumpserver_requirements.txt \
+&& /usr/bin/cp -rf coco/requirements/requirements.txt requirements/coco_requirements.txt \
+&& /usr/bin/cp -rf jumpserver/requirements/rpm_requirements.txt requirements/rpm_requirements.txt
+#&& sed -i "s/$/ $(cat coco/requirements/rpm_requirements.txt)/g" requirements/rpm_requirements.txt
 
 ## 构建python环境镜像
 docker build -t jumpserver-env .
 ## 拉取guacamole镜像
 docker pull jumpserver/guacamole:latest
 
-mkdir -p temp && mv *.zip temp
+mkdir -p temp && mv *.zip *.tar.gz -t temp
 
 ## 创建表结构，初始化数据库
 #docker run --rm -v $PWD/jumpserver:/jumpserver --net="host" jumpserver-env sh -c "cd /jumpserver/utils/ && bash make_migrations.sh"

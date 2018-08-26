@@ -13,10 +13,12 @@ services:
     network_mode: "host"
     ports:
         - "3306:3306"
+    ## 数据库账号，db_name
     environment:
-        - MYSQL_ROOT_PASSWORD=jumpserver
-        #- MYSQL_USER=admin 
-        #- MYSQL_PASSWORD=admin
+        - MYSQL_ROOT_PASSWORD=mysql
+        - MYSQL_DATABASE=jumpserver
+        - MYSQL_USER=jumpserver
+        - MYSQL_PASSWORD=jumpserver
         - TZ=Asia/Shanghai
     command:
          --character-set-server=utf8 --collation-server=utf8_general_ci
@@ -43,4 +45,3 @@ services:
        options:
            max-size: "10M"
            max-file: "5"
-    #
