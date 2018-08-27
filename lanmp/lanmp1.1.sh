@@ -24,11 +24,10 @@ fi
 ##get the archive of the system,i686 or x86_64.
 ar=`arch`
 ##close seliux
-sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
-selinux_s=`getenforce`
-if [ $selinux_s == "Enforcing" ]
+if [ $(getenforce) == "Enforcing" ]
 then
     setenforce 0
+	sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
 fi
 ##close iptables
 iptables-save > /etc/sysconfig/iptables_`date +%s`
