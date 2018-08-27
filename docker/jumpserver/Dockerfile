@@ -9,13 +9,21 @@ FROM centos
 # File Author / Maintainer
 MAINTAINER song-liang <1107179995@qq.com>
 
-## 设置中文字符集
-RUN localedef -c -f UTF-8 -i zh_CN zh_CN.UTF-8 \
-    && export LC_ALL=zh_CN.UTF-8 \
-    && echo 'LANG="zh_CN.UTF-8"' > /etc/locale.conf
+# 修改时区,安装中文支持 配置显示中文
+RUN rm -rf /etc/localtime \
+    && ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && echo 'Asia/Shanghai' > /etc/timezone \
+    && yum -y install kde-l10n-Chinese \
+    && yum -y reinstall glibc-common && yum clean all \
+    && localedef -c -f UTF-8 -i zh_CN zh_CN.utf8
+
+# 设置环境变量
+ENV LANG=zh_CN.utf8 \
+    LC_ALL=zh_CN.utf8 \
+    TERM=xterm
 
 ## 安装部分rpm依赖包
-RUN yum -y install sqlite-devel xz gcc automake zlib-devel openssl-devel epel-release openldap-devel wget make
+RUN yum -y install sqlite-devel xz gcc automake zlib-devel openssl-devel epel-release openldap-devel wget make && yum clean all
 
 ## 下载编译安装Python3.6,创建虚拟环境变量
 RUN wget https://www.python.org/ftp/python/3.6.6/Python-3.6.6.tar.xz \
