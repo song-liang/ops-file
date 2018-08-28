@@ -8,7 +8,7 @@ services:
         - /etc/localtime:/etc/localtime:ro
         - /usr/share/zoneinfo:/usr/share/zoneinfo:ro
         - ./mysql:/var/lib/mysql
-        #- ./my.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+        - ./my.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
     privileged: true
     network_mode: "host"
     ports:
@@ -30,18 +30,18 @@ services:
     privileged: true
     volumes:
         - /etc/localtime:/etc/localtime:ro
+        - /etc/timezone:/etc/timezone:ro
         - ./redis:/data
-        - ./conf/redis.conf:/usr/local/etc/redis/redis.conf
+        #- ./conf/redis.conf:/usr/local/etc/redis/redis.conf
     network_mode: "host"
     ports:
         - "6379:6379"
-    #environment:
-    #    - requirepass=jumpserver
-    #    - appendonly=yes
     command:
-       redis-server /usr/local/etc/redis/redis.conf
+       #redis-server /usr/local/etc/redis/redis.conf
+       --requirepass "jumpserver"
+       #--appendonly yes
     logging:
        driver: "json-file"
        options:
-           max-size: "10M"
-           max-file: "5"
+           max-size: "5M"
+           max-file: "3"

@@ -7,16 +7,16 @@ services:
     privileged: true
     volumes:
         - /etc/localtime:/etc/localtime:ro
+        - /etc/timezone:/etc/timezone:ro
         - ./data:/data
-        - ./redis.conf:/usr/local/etc/redis/redis.conf
+        #- ./redis.conf:/usr/local/etc/redis/redis.conf
     network_mode: "host"
     ports:
         - "6379:6379"
-    #environment:
-    #    - requirepass=admin
-    #    - appendonly=yes
     command:
-        redis-server /usr/local/etc/redis/redis.conf
+       #redis-server /usr/local/etc/redis/redis.conf
+       --requirepass "jumpserver"
+       #--appendonly yes
     logging:
         driver: "json-file"
         options:
