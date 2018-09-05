@@ -5,7 +5,7 @@
 ##  centos 6.8
 ##liang 2016.9.19
 
-zabbix_3_2=http://120.52.73.45/nchc.dl.sourceforge.net/project/zabbix/ZABBIX%20Latest%20Stable/3.2.1/zabbix-3.2.1.tar.gz
+zabbix_3_4=https://nchc.dl.sourceforge.net/project/zabbix/ZABBIX%20Latest%20Stable/3.4.13/zabbix-3.4.13.tar.gz
 
 
 ##check last command is OK or not.
@@ -34,13 +34,13 @@ if ! grep '^zabbix:' /etc/passwd
 fi
 
 ##需要的库文件
-yum install -y net-snmp-devel OpenIPMI-devel openldap openldap-devel
+yum install -y net-snmp-devel OpenIPMI-devel openldap openldap-devel mysql-devel libevent-devel
 
-z_dir=`echo ${zabbix_3_2##*/}|sed 's/.tar.gz//g'`
+z_dir=`echo ${zabbix_3_4##*/}|sed 's/.tar.gz//g'`
 ##编译安装
 cd /usr/local/src
-[ -f ${zabbix_3_2##*/} ] || wget $zabbix_3_2
-tar zxvf ${zabbix_3_2##*/} && cd $z_dir
+[ -f ${zabbix_3_4##*/} ] || wget $zabbix_3_4
+tar zxvf ${zabbix_3_4##*/} && cd $z_dir
 check_ok
 
 ./configure \
