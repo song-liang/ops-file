@@ -10,7 +10,7 @@ networks:
 services:
  zabbix_web_nginx:
     restart: always
-    image: zabbix/zabbix-web-nginx-mysql
+    image: zabbix/zabbix-web-nginx-mysql:centos-latest
     container_name: zabbix_web_nginx
     privileged: true
     hostname: zabbix_web_nginx
@@ -33,7 +33,7 @@ services:
     
  zabbix_server:
     restart: always
-    image: zabbix/zabbix-server-mysql
+    image: zabbix/zabbix-server-mysql:centos-latest
     container_name: zabbix_server
     privileged: true
     hostname: zabbix_server
@@ -78,7 +78,7 @@ services:
               
  zabbix_agent:
     restart: always
-    image: zabbix/zabbix-agent:centos-3.4-latest
+    image: zabbix/zabbix-agent:centos-latest
     container_name: zabbix_agent
     privileged: true
     hostname: zabbix_agent
