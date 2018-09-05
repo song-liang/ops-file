@@ -141,6 +141,7 @@ phpfpm_configure () {
     --enable-ftp \
     --enable-mbstring \
     --enable-exif \
+	--enable-sockets \
     --disable-ipv6 \
     --with-pear \
     --with-curl \

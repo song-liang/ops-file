@@ -4,13 +4,13 @@ ar=`arch`
 dat=`date +%F-%H-%M`
 mysql_5_1=http://mirrors.163.com/mysql/Downloads/MySQL-5.1/mysql-5.1.72-linux-$ar-glibc23.tar.gz
 mysql_5_6=http://mirrors.163.com/mysql/Downloads/MySQL-5.6/mysql-5.6.41-linux-glibc2.12-$ar.tar.gz
-mysql_5_7=http://mirrors.163.com/mysql/Downloads/MySQL-5.7/mysql-5.7.13-linux-glibc2.5-$ar.tar.gz
+mysql_5_7=http://mirrors.163.com/mysql/Downloads/MySQL-5.7/mysql-5.7.23-linux-glibc2.12-$ar.tar.gz
 
 ##选择版本
 while :
 do
 read -p "Please chose the version of mysql. (5.1|5.6|5.7|5.8)" mysql_v
-   if [ "$mysql_v" == "5.1" -o "$mysql_v" == "5.6" -o "$mysql_v" == "5.7" -o "$mysql_v" == "8.0"]
+   if [ "$mysql_v" == "5.1" -o "$mysql_v" == "5.6" -o "$mysql_v" == "5.7" -o "$mysql_v" == "8.0" ]
    then
 	break
    else
