@@ -74,18 +74,18 @@ check_ok
 chkconfig zabbix_server on
 chkconfig zabbix_agentd on
 
-##导入数据,授权登录
-echo "create database"
-mysql -uroot -e "create database zabbix;"
-check_ok
-mysql -uroot -e "use zabbix;\n source /usr/local/src/$z_dir/database/mysql/schema.sql;"
-check_ok
-mysql -uroot -e "use zabbix;\n source /usr/local/src/$z_dir/database/mysql/images.sql;"
-check_ok
-mysql -uroot -e "use zabbix;\n source /usr/local/src/$z_dir/database/mysql/data.sql;"
-check_ok
-mysql -uroot -e "grant all on zabbix.* to 'zabbix'@'localhost' identified by 'zabbix';"
-check_ok
+#导入数据,授权登录
+# echo "create database"
+# mysql -uroot -e "create database zabbix;"
+# check_ok
+# mysql -uroot -e "use zabbix;\n source /usr/local/src/$z_dir/database/mysql/schema.sql;"
+# check_ok
+# mysql -uroot -e "use zabbix;\n source /usr/local/src/$z_dir/database/mysql/images.sql;"
+# check_ok
+# mysql -uroot -e "use zabbix;\n source /usr/local/src/$z_dir/database/mysql/data.sql;"
+# check_ok
+# mysql -uroot -e "grant all on zabbix.* to 'zabbix'@'localhost' identified by 'zabbix';"
+# check_ok
 
 ##修改配置文件
 sed -i '/# DBHost=localhost/a\DBHost=localhost' /usr/local/zabbix/etc/zabbix_server.conf
@@ -104,12 +104,12 @@ cp -r /usr/local/src/$z_dir/frontends/php/* /data/www/zabbix
 check_ok
 
 ##配置vhost
-sed -i 's/\#Include conf\/extra\/httpd-vhosts.conf\/Include conf\/extra\/httpd-vhosts.conf/' /usr/local/apache2/conf/httpd.conf
-cat >> /usr/local/apache2/conf/extra/httpd-vhosts.conf <<EOF
-<VirtualHost *:80>
-    DocumentRoot "/data/www/zabbix"
-</VirtualHost>
-EOF
+# sed -i 's/\#Include conf\/extra\/httpd-vhosts.conf\/Include conf\/extra\/httpd-vhosts.conf/' /usr/local/apache2/conf/httpd.conf
+# cat >> /usr/local/apache2/conf/extra/httpd-vhosts.conf <<EOF
+# <VirtualHost *:80>
+    # DocumentRoot "/data/www/zabbix"
+# </VirtualHost>
+# EOF
 
 
 ##配置php.ini

@@ -8,7 +8,7 @@
 
 nginx_1_6=http://nginx.org/download/nginx-1.6.0.tar.gz
 nginx_1_8=http://nginx.org/download/nginx-1.8.0.tar.gz
-nginx_1_12=http://nginx.org/download/nginx-1.12.2.tar.gz
+nginx_1_14=https://nginx.org/download/nginx-1.14.0.tar.gz
 
 check_ok () {
 if [ $? != 0 ]
@@ -55,12 +55,12 @@ nginx_configure () {
 ##选择版本
 while :
 do
-  read -p "Please chose the version of Nginx. (1.6|1.8|1.12)" nginx_v
-  if [ "$nginx_x" == "1.6" -o "$nginx_v" == "1.8" -o "$nginx_v == 1.12" ]
+  read -p "Please chose the version of Nginx. (1.6|1.8|1.14)" nginx_v
+  if [ "$nginx_x" == "1.6" -o "$nginx_v" == "1.8" -o "$nginx_v == 1.14" ]
   then
      break
   else
-     echo "only (1.6) or (1.8) or (1.12)"
+     echo "only (1.6) or (1.8) or (1.14)"
   fi
 done
 
@@ -83,15 +83,15 @@ case $nginx_v in
 		
 		nginx_configure
 		;;
-	1.12)
+	1.14)
 		cd /usr/local/src
-		[ -f ${nginx_1_12##*/} ] || wget $nginx_1_12
-		tar zxvf ${nginx_1_12##*/}
-		cd `echo ${nginx_1_12##*/}|sed 's/.tar.gz//g'`
+		[ -f ${nginx_1_14##*/} ] || wget $nginx_1_14
+		tar zxvf ${nginx_1_14##*/}
+		cd `echo ${nginx_1_14##*/}|sed 's/.tar.gz//g'`
 
 		nginx_configure
 		;;
 	*)
-		echo "only (1.6) or (1.8) or (1.12)"
+		echo "only (1.6) or (1.8) or (1.14)"
 		;;
 esac

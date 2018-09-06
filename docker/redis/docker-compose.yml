@@ -1,0 +1,25 @@
+version: '3.0'
+services:
+ redis:
+    restart: always
+    image: redis:4
+    container_name: redis
+    privileged: true
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./data:/data
+        #- ./redis.conf:/usr/local/etc/redis/redis.conf
+    network_mode: "host"
+    ports:
+        - "6379:6379"
+    environment:
+        - TZ=Asia/Shanghai
+    command:
+       #redis-server /usr/local/etc/redis/redis.conf
+       --requirepass "jumpserver" --appendonly yes
+    logging:
+        driver: "json-file"
+        options:
+           max-size: "10M"
+           max-file: "5"
+       
