@@ -13,7 +13,6 @@ services:
     network_mode: "host"
     ports:
         - "3306:3306"
-    ## 数据库账号，db_name
     environment:
         - MYSQL_ROOT_PASSWORD=mysql
         - MYSQL_DATABASE=jumpserver
@@ -30,16 +29,16 @@ services:
     privileged: true
     volumes:
         - /etc/localtime:/etc/localtime:ro
-        - /etc/timezone:/etc/timezone:ro
         - ./redis:/data
         #- ./conf/redis.conf:/usr/local/etc/redis/redis.conf
     network_mode: "host"
     ports:
         - "6379:6379"
+    environment:
+        - TZ=Asia/Shanghai
     command:
        #redis-server /usr/local/etc/redis/redis.conf
-       --requirepass "jumpserver"
-       #--appendonly yes
+       --requirepass "jumpserver" --appendonly yes
     logging:
        driver: "json-file"
        options:
