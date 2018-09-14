@@ -34,7 +34,7 @@ if ! grep '^zabbix:' /etc/passwd
 fi
 
 ##需要的库文件
-yum install -y net-snmp-devel OpenIPMI-devel openldap openldap-devel mysql-devel libevent-devel
+yum install -y net-snmp-devel  OpenIPMI OpenIPMI-devel openldap openldap-devel mysql-devel libevent-devel libssh2-devel java-devel
 
 z_dir=`echo ${zabbix_3_4##*/}|sed 's/.tar.gz//g'`
 ##编译安装
@@ -49,11 +49,15 @@ check_ok
 --enable-agent \
 --with-mysql \
 --enable-ipv6 \
+--enable-java \
+--enable-proxy \
+--with-ssh2 \
 --with-net-snmp \
 --with-libcurl \
 --with-libxml2 \
 --with-openipmi \
---with-ldap
+--with-ldap \
+--with-openipmi 
 
 check_ok
 
