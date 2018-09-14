@@ -1,38 +1,60 @@
-nginx:
-    image: nginx
+version: '3.0'
+services:
+
+ nginx:
+    build: nginx-conf
     restart: always
     container_name: nginx
+    hostname: nginx
+    privileged: true
     volumes:
         - /etc/localtime:/etc/localtime:ro
         - ./nginx-conf/nginx.conf:/etc/nginx/nginx.conf
         - ./nginx-conf/conf.d:/etc/nginx/conf.d
         - ./logs/:/var/log/nginx/
-        - ./www:/www
+        - ./www:/var/www/html
     environment:
-        - TZ=Asia/Shanghai    
+        TZ: Asia/Shanghai    
     ports:
-        - "81:80"
+        - "80:80"
     links:
         - php:php_fpm
-    ulimits:
-        nproc: 65535
-    hostname: nginx
-    #mem_limit: 1024m
-    
-php:
-    image: php-fpm
+
+ php:
+    build: php-fpm
     restart: always
     container_name: php_fpm
+    hostname: php_fpm
+    privileged: true
     volumes:
         - /etc/localtime:/etc/localtime:ro
-        #- ./php-fpm/php.conf.d:/usr/local/etc/php/conf.d
-        - ./php-fpm/php-fpm.d:/usr/local/etc/php-fpm.d
+        - ./php-fpm/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
         - ./php-fpm/php.ini:/usr/local/etc/php/php.ini
         - ./www:/var/www/html
     environment:
-        - TZ=Asia/Shanghai   
+        TZ: Asia/Shanghai   
     expose:
         - "9000"
-    ulimits:
-        nproc: 65535
-    hostname: php_fpm
+    depends_on:
+        - mysql
+
+ mysql:
+    restart: always
+    image: mysql
+    container_name: mysql
+    privileged: true
+    volumes:
+        - ./mysql/db:/var/lib/mysql
+        - ./mysql/my.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+    network_mode: "host"
+    ports:
+        - "3306:3306"
+    environment:
+        TZ: Asia/Shanghai
+        MYSQL_ROOT_PASSWORD: 0aeiiulUijr"grR2
+        MYSQL_DATABASE: db1
+        #MYSQL_USER: discuz
+        #MYSQL_PASSWORD: ad_PLM(*&^(IJN
+    command:
+        --character-set-server=utf8 --collation-server=utf8_general_ci --default-authentication-plugin=mysql_native_password
+
