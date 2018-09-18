@@ -53,6 +53,8 @@ services:
         - "5000:5000"
     command:
          /opt/coco/cocod start
+    depends_on:
+        - jumpserver
     logging:
       driver: "json-file"
       options:
@@ -72,6 +74,8 @@ services:
     ports:
         - "8081:8080"
     #network_mode: "host"
+    depends_on:
+        - jumpserver
     logging:
       driver: "json-file"
       options:
