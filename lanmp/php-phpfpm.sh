@@ -219,9 +219,9 @@ then
         check_ok
      fi
     [ -f /usr/local/php-fpm/etc/php-fpm.conf ] || curl http://www.apelearn.com/study_v2/.phpfpm_conf -o /usr/local/php-fpm/etc/php-fpm.conf
-    [ -f /etc/init.d/phpfpm ] || /bin/cp sapi/fpm/php-fpm /etc/init.d/phpfpm
-    chmod 755 /etc/init.d/phpfpm
-    chkconfig phpfpm on
-    service phpfpm start
+    [ -f /etc/init.d/php-fpm ] || /bin/cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+    chmod 755 /etc/init.d/php-fpm
+    chkconfig php-fpm on
+    service php-fpm start
     check_ok
 fi
