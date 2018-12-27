@@ -1,0 +1,46 @@
+version: '3'
+services:
+  solr_1:
+    image: solr
+    container_name: solr_1
+    restart: always
+    ports:
+      - "8983:8983"
+    # volumes:
+    #   - ./data1:/opt/solr/server/solr/
+    environment:
+      ZK_HOST: zookeeper_01:2181,zookeeper_02:2181,zookeeper_03:2181
+    # depends_on:
+    #   - zookeeper_01
+    #   - zookeeper_02
+    #   - zookeeper_03
+
+  solr_2:
+    image: solr
+    container_name: solr_2
+    restart: always
+    ports:
+      - "8984:8983"
+    # volumes:
+    #   - ./data2:/opt/solr/server/solr/
+    environment:
+      ZK_HOST: zookeeper_01:2181,zookeeper_02:2181,zookeeper_03:2181
+    # depends_on:
+    #   - zookeeper_01
+    #   - zookeeper_02
+    #   - zookeeper_03
+
+  solr_3:
+    image: solr
+    container_name: solr_3
+    restart: always
+    ports:
+      - "8985:8983"
+    # volumes:
+    #   - ./data3:/opt/solr/server/solr/
+    environment:
+      ZK_HOST: zookeeper_01:2181,zookeeper_02:2181,zookeeper_03:2181
+    # depends_on:
+    #   - zookeeper_01
+    #   - zookeeper_02
+    #   - zookeeper_03
