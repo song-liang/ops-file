@@ -1,0 +1,61 @@
+version: '3.2'
+services:
+  mysql_master01:
+    restart: always
+    image: mysql
+    container_name: mysql_master01
+    hostname: m1
+    privileged: true
+    volumes:
+        - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        - ./data01/:/var/lib/mysql
+        #- ./my01.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+    ports:
+        - "3306:3306"
+    #links:
+    #    - mysql_master02
+    networks:
+      mysql:
+        ipv4_address: 172.15.0.5
+    ulimits:
+      nproc: 65535
+    environment:
+        - MYSQL_ROOT_PASSWORD=mysql
+        #- MYSQL_USER=admin 
+        #- MYSQL_PASSWORD=admin
+        - TZ=Asia/Shanghai
+    command:
+        --character-set-server=utf8 --collation-server=utf8_general_ci --replicate-same-server-id=1
+
+  mysql_master02:
+    restart: always
+    image: mysql
+    container_name: mysql_master02
+    hostname: m2
+    privileged: true
+    volumes:
+        - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        - ./data02/:/var/lib/mysql
+        #- ./my02.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+    ports:
+        - "3307:3306"
+    networks:
+      mysql:
+        ipv4_address: 172.15.0.6
+    links:
+        - mysql_master01
+    environment:
+        - MYSQL_ROOT_PASSWORD=mysql
+        - TZ=Asia/Shanghai
+    command:
+        --character-set-server=utf8 --collation-server=utf8_general_ci --replicate-same-server-id=2
+
+networks:
+    mysql:
+      driver: bridge
+      ipam:
+        driver: default
+        config:
+        - subnet: 172.15.0.0/24
+        # gateway: 172.15.0.1
+

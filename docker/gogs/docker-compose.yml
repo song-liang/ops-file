@@ -1,0 +1,36 @@
+version: '3.2'
+services:
+
+  mysql:
+    restart: always
+    image: mysql
+    container_name: mysql
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - /usr/share/zoneinfo:/usr/share/zoneinfo:ro
+        - ./data/:/var/lib/mysql
+        #- ./my.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+    privileged: true
+    ports:
+        - "3306:3306"
+    environment:
+        - MYSQL_ROOT_PASSWORD=mysql
+        - MYSQL_DATABASE=gogs
+        - MYSQL_USER=gogs 
+        - MYSQL_PASSWORD=gogs@123
+        - TZ=Asia/Shanghai
+    command:
+         --character-set-server=utf8 --collation-server=utf8_general_ci
+
+  gogs:
+    restart: always
+    image: gogs/gogs
+    container_name: gogs
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./data/:/data
+        #- ./gogs/conf/app.ini:/data/gogs/conf/app.ini
+    privileged: true
+    ports:
+        - "3022:22"
+        - "3000:3000"
