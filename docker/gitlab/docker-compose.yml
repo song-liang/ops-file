@@ -1,0 +1,25 @@
+version: "3.1"
+services:
+   gitlab:
+     image: gitlab/gitlab-ce:latest
+     restart: always
+     container_name: gitlab-ce
+     privileged: true
+     ports:
+       - "2022:22"
+       - "10000:10000"
+     networks:
+       - gitlab
+     volumes:
+       - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro 
+       - ./data:/var/opt/gitlab
+       - ./logs:/var/log/gitlab
+       - ./config:/etc/gitlab
+     environment:
+       GITLAB_OMNIBUS_CONFIG: |
+         external_url 'https://192.168.31.120:10000/gitlab'
+         gitlab_rails['gitlab_shell_ssh_port'] = 2022
+         gitlab_rails['time_zone'] = 'Asia/Shanghai'
+
+networks:
+   gitlab:
