@@ -1,0 +1,29 @@
+version: '3.2'
+services:
+  pmm-server:
+    restart: always
+    image: percona/pmm-server:1
+    container_name: pmm-server
+    hostname: pmm-server
+    privileged: true
+    volumes:
+        - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        - ./mysql:/var/lib/mysql
+        - ./grafana:/var/lib/grafana
+        - ./consul-data:/opt/consul-data
+        - ./prometheus-data:/opt/prometheus/data
+        #- ./ssl:/srv/nginx  # 使用已有的证书时挂载
+    ports:
+        - "80:80"
+        - "443:443"
+    environment:
+        - TZ=Asia/Shanghai
+        - METRICS_RETENTION=720h
+        - METRICS_MEMORY=262144
+        - METRICS_RESOLUTION=1s
+        - QUERIES_RETENTION=8
+        - ORCHESTRATOR_ENABLED=true
+        - ORCHESTRATOR_USER=orc_client_user
+        - ORCHESTRATOR_PASSWORD=orc_client_password
+        - SERVER_USER=pmm
+        - SERVER_PASSWORD=pmm
