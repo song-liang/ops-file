@@ -6,9 +6,10 @@
 ##
 ##Nginx 版本 1.6，1.8，1.9，下载失败，请修改下载链接
 
-nginx_1_6=http://nginx.org/download/nginx-1.6.0.tar.gz
+nginx_1_15=http://nginx.org/download/nginx-1.15.12.tar.gz
 nginx_1_8=http://nginx.org/download/nginx-1.8.0.tar.gz
 nginx_1_14=https://nginx.org/download/nginx-1.14.0.tar.gz
+
 
 check_ok () {
 if [ $? != 0 ]
@@ -18,19 +19,33 @@ then
 fi
 }
 
-yum install -y libaio library cmake glibc gcc zlib-devel pcre pcre-devel openssl openssl-devel
+yum install -y libaio library cmake glibc gcc zlib-devel pcre pcre-devel \
+	openssl openssl-devel libxslt-devel gd-devel GeoIP GeoIP-devel GeoIP-data
 
 ##函数:编译安装与配置
 nginx_configure () {
 	./configure \
 	--prefix=/usr/local/nginx \
+	--with-http_v2_module \
+	--with-http_dav_module \
+	--with-http_addition_module \
 	--with-http_realip_module \
-	--with-http_sub_module \
+	--with-http_geoip_module \
+	--with-http_xslt_module \
+	--with-http_image_filter_module \
 	--with-http_gzip_static_module \
+	--with-http_gunzip_module \
+	--with-http_sub_module \
 	--with-http_stub_status_module  \
+	--with-http_auth_request_module \
 	--with-http_ssl_module \
 	--with-pcre \
-	--with-stream
+	--with-stream \
+	--with-stream_realip_module \
+	--with-stream_geoip_module \
+	--with-stream_ssl_module \
+	--with-stream_ssl_preread_module \
+	--with-threads
 	check_ok
 	make && make install
 	check_ok
@@ -55,22 +70,22 @@ nginx_configure () {
 ##选择版本
 while :
 do
-  read -p "Please chose the version of Nginx. (1.6|1.8|1.14)" nginx_v
-  if [ "$nginx_x" == "1.6" -o "$nginx_v" == "1.8" -o "$nginx_v == 1.14" ]
+  read -p "Please chose the version of Nginx. (1.15|1.8|1.14)" nginx_v
+  if [ "$nginx_x" == "1.15" -o "$nginx_v" == "1.8" -o "$nginx_v == 1.14" ]
   then
      break
   else
-     echo "only (1.6) or (1.8) or (1.14)"
+     echo "only (1.15) or (1.8) or (1.14)"
   fi
 done
 
 #选择版本安装
 case $nginx_v in
- 	1.6)
+ 	1.15)
 		cd /usr/local/src
-		[ -f ${nginx_1_6##*/} ] || wget $nginx_1_6
-		tar zxvf ${nginx_1_6##*/}
-		cd `echo ${nginx_1_6##*/}|sed 's/.tar.gz//g'`
+		[ -f ${nginx_1_15##*/} ] || wget $nginx_1_15
+		tar zxvf ${nginx_1_15##*/}
+		cd `echo ${nginx_1_15##*/}|sed 's/.tar.gz//g'`
 
 		nginx_configure
 		;; 
@@ -92,6 +107,6 @@ case $nginx_v in
 		nginx_configure
 		;;
 	*)
-		echo "only (1.6) or (1.8) or (1.14)"
+		echo "only (1.15) or (1.8) or (1.14)"
 		;;
 esac

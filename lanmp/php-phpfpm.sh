@@ -8,7 +8,7 @@
 
 php_5_4=http://cn2.php.net/distributions/php-5.4.45.tar.gz
 php_5_6=http://cn.php.net/distributions/php-5.6.37.tar.gz
-php_7_0=http://cn2.php.net/distributions/php-7.0.5.tar.gz
+php_7_0=http://cn2.php.net/distributions/php-7.3.3.tar.gz
 
 ##选择PHP OR php-fpm
 while :
@@ -51,7 +51,7 @@ else
 fi
 }
 
-for p in gcc wget vim  perl perl-devel libaio libaio-devel pcre-devel zlib-devel openldap openldap-devel
+for p in gcc wget vim  perl perl-devel libaio libaio-devel pcre-devel zlib-devel openldap openldap-devel 
 do
     myum $p
 done
@@ -63,7 +63,7 @@ php_configure () {
     for p in openssl-devel bzip2-devel \
     libxml2-devel curl-devel libpng-devel \
     libjpeg-devel freetype-devel libmcrypt-devel\
-    libtool-ltdl-devel perl-devel
+    libtool-ltdl-devel perl-devel libzip-devel
     do
       myum $p
     done
