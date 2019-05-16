@@ -1,0 +1,64 @@
+version: '3.2'
+services:
+ apollo-admin-server:
+    restart: always
+    image: apollo-admin-server:v1.3.0
+    container_name: apollo_admin_8090
+    hostname: admin-server
+    volumes:
+        - /usr/share/zoneinfo:/usr/share/zoneinfo:ro
+        - ./logs:/opt/logs/apollo-admin-server
+    network_mode: "host"
+    #ports:
+    #    - "8090:8090"
+    #networks:
+    #  apollo:
+    environment:
+        - DATASOURCES_URL=${CONFIG_DATA_URL}
+        - DATASOURCES_USERNAME=${DATA_USERNAME}
+        - DATASOURCES_PASSWORD=${DATA_PASSWORD}
+        - eureka.service.url=${EUREKA_URL}
+
+ apollo-config-server:
+    restart: always
+    image: apollo-config-server:v1.3.0
+    container_name: apollo_config_8180
+    hostname: config-server
+    volumes:
+        - /usr/share/zoneinfo:/usr/share/zoneinfo:ro
+        - ./logs:/opt/logs/apollo-config-server
+    network_mode: "host"
+    #ports:
+    #    - "8180:8180"
+    #networks:
+    #  apollo:
+    environment:
+        - DATASOURCES_URL=${CONFIG_DATA_URL}
+        - DATASOURCES_USERNAME=${DATA_USERNAME}
+        - DATASOURCES_PASSWORD=${DATA_PASSWORD}
+        - eureka.service.url=${EUREKA_URL}
+
+ apollo-portal-server:
+    restart: always
+    image: apollo-portal-server:v1.3.0
+    container_name: apollo_portal_8070
+    volumes:
+        - /usr/share/zoneinfo:/usr/share/zoneinfo:ro
+        - ./logs:/opt/logs/apollo-portal-server
+    network_mode: "host"
+    #ports:
+    #    - "8070:8070"
+    #networks:
+    #   apollo:
+    environment:
+        - DATASOURCES_URL=${PORTAL_DATA_URL}
+        - DATASOURCES_USERNAME=${DATA_USERNAME}
+        - DATASOURCES_PASSWORD=${DATA_PASSWORD}
+        #- DEV_META_SERVICE_NAME=172.22.14.134:8180
+        #- TEST_ALPHA_META_SERVICE_NAME=
+        - TEST_BETA_META_SERVICE_NAME=172.22.14.134:8180
+        #- PROD_META_SERVICE_NAME=
+        
+networks:
+    apollo:
+      #external: true
