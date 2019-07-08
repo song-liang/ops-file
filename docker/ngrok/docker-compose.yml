@@ -1,0 +1,14 @@
+ngrok:
+    image: hteen/ngrok
+    container_name: ngrok_server
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./ngrok:/myfiles
+    ports:
+        - "81:80"
+        - "1443:443"
+        - "4443:4443"
+    environment:
+        - DOMAIN="ngrok.test.com"
+    command:
+         /bin/sh /server.sh

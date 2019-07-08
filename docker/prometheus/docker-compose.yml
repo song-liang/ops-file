@@ -1,0 +1,52 @@
+version: '3'
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    hostname: prometheus
+    restart: always
+    volumes:
+        - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+        - ./prometheus/data:/prometheus
+    ports:
+        - "19090:9090"
+    networks:
+        - monitor
+    depends_on:
+        - cadvisor
+
+#  cadvisor:
+#    image: google/cadvisor
+#    container_name: cadvisor
+#    restart: unless-stopped
+#    privileged: true
+#    volumes:
+#      - /:/rootfs:ro
+#      - /var/run:/var/run:rw
+#      - /sys:/sys:ro
+#      - /var/lib/docker/:/var/lib/docker:ro
+#      - /dev/disk/:/dev/disk/
+#    ports:
+#      - "18080:8080"
+#    networks:
+#        - monitor  
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    hostname: grafana
+    restart: always
+    volumes:
+        #- ./grafana/conf:/etc/grafana/
+        - ./grafana/data:/var/lib/grafana
+        - ./grafana/log:/var/log/grafana
+    environment:
+        - GF_SECURITY_ADMIN_PASSWORD=admin
+        - GF_USERS_ALLOW_SIGN_UP=false
+    ports:
+        - "3000:3000"
+    networks:
+        - monitor
+
+networks:
+    monitor:

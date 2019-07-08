@@ -4,7 +4,7 @@
 tar zxvf jdk-8u102-linux-x64.tar.gz -C /usr/local/
 
 touch /etc/profile.d/java.sh
-cat > /etc/profile.d/java.sh <<EOF
+cat > /etc/profile.d/java.sh <<"EOF"
 #!/bin/bash
 JAVA_HOME=/usr/local/jdk1.8.0_102
 JAVA_BIN=$JAVA_HOME/bin

@@ -1,0 +1,10 @@
+ngrok:
+    image: hteen/ngrok
+    container_name: ngrok_build
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./ngrok:/myfiles
+    environment:
+        - DOMAIN="ngrok.test.com"
+    command:
+         /bin/sh /build.sh

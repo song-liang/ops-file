@@ -1,0 +1,52 @@
+version: '3'
+services:
+ redis-6380:
+    restart: always
+    image: redis
+    container_name: redis-6380
+    privileged: true
+    volumes:
+        - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        - ./6380/data:/data
+        - ./6380/redis.conf:/etc/redis.conf
+    network_mode: "host"
+    ports:
+        - "6380:6380"
+    environment:
+        - TZ=Asia/Shanghai
+    command:
+       redis-server /etc/redis.conf
+  
+   redis-6381:
+    restart: always
+    image: redis
+    container_name: redis-6381
+    privileged: true
+    volumes:
+        - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        - ./6381/data:/data
+        - ./6381/redis.conf:/etc/redis.conf
+    network_mode: "host"
+    ports:
+        - "6381:6381"
+    environment:
+        - TZ=Asia/Shanghai
+    command:
+       redis-server /etc/redis.conf
+
+   redis-6382:
+    restart: always
+    image: redis
+    container_name: redis-6382
+    privileged: true
+    volumes:
+        - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        - ./6382/data:/data
+        - ./6382/redis.conf:/etc/redis.conf
+    network_mode: "host"
+    ports:
+        - "6382:6382"
+    environment:
+        - TZ=Asia/Shanghai
+    command:
+       redis-server /etc/redis.conf

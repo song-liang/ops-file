@@ -1,0 +1,26 @@
+version: '3'
+services:
+  rabbitmq:
+    restart: always
+    image: rabbitmq:management-alpine
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    ports:
+      - "15672:15672"
+      - "5673:5672"
+    networks:
+        default:
+    volumes:
+      - ./rabbitmq:/var/lib/rabbitmq
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  default:
+    external:
+      name: network-public

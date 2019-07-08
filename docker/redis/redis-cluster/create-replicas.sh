@@ -1,0 +1,1 @@
+docker exec redis_6380 redis-trib.rb create --replicas 1 redis_6380:6380 redis_6381:6381 redis_6382:6382

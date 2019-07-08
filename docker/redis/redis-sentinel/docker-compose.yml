@@ -1,0 +1,78 @@
+version: '3'
+services:
+ redis_6379:
+    restart: always
+    image: redis
+    container_name: redis_6379
+    volumes:
+        - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        - ./6379/data:/data
+        - ./6379/redis.conf:/etc/redis.conf
+    #network_mode: "host"
+    ports:
+        - "6379:6379"
+    networks:
+        redis:
+    environment:
+        - TZ=Asia/Shanghai
+    command:
+       redis-server /etc/redis.conf
+       
+ redis_sentinel_26379:
+    restart: always
+    image: redis
+    container_name:  redis_sentinel_26379
+    volumes:
+        - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        - ./6379/sentinel.conf:/etc/sentinel.conf
+        - ./6379/data/tmp:/data/tmp
+    #network_mode: "host"
+    ports:
+        - "26379:26379"
+    networks:
+        redis:
+    environment:
+        - TZ=Asia/Shanghai
+    command:
+       redis-sentinel /etc/sentinel.conf
+
+##----------redis slave---哨兵 -------##
+
+ redis_6380:
+    restart: always
+    image: redis
+    container_name: redis_6380
+    volumes:
+        - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        - ./6380/data:/data
+        - ./6380/redis.conf:/etc/redis.conf
+    ports:
+        - "6380:6380"
+    networks:
+        redis:
+    environment:
+        - TZ=Asia/Shanghai
+    command:
+       redis-server /etc/redis.conf
+
+ redis_sentinel_26380:
+    restart: always
+    image: redis
+    container_name:  redis_sentinel_26380
+    volumes:
+        - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        - ./6380/sentinel.conf:/etc/sentinel.conf
+        - ./6380/data/tmp:/data/tmp
+    ports:
+        - "26380:26380"
+    networks:
+        redis:
+    environment:
+        - TZ=Asia/Shanghai
+    command:
+       redis-sentinel /etc/sentinel.conf
+
+
+networks:
+    redis:
+      driver: bridge

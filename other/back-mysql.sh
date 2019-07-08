@@ -12,7 +12,7 @@ fi
 
 # 逻辑备份
 #获取数据库名称列表
-DB=$(/usr/local/mysql/bin/mysql -u$MYSQL_U -h$MYSQL_H -p$MYSQL_P -Bse 'show databases')
+DB=$(mysql -u$MYSQL_U -h$MYSQL_H -p$MYSQL_P -Bse 'show databases')
 
 #循环执行备份所有的msyql数据库
 mkdir -p "$backdir/$DATE"
@@ -27,7 +27,7 @@ cd $backdir
 tar zcvf $DATE.tar.gz $DATE --remove-files
 
 # xtrabackup物理全量备份
-xtrabackup --user=$MYSQL_U --password=$MYSQL_P --socket=/tmp/mysql.sock --datadir=/data/mysql/ --backup --parallel=2 --stream=tar --target-dir=/home/backup/tmp | gzip - > /home/backup/xtrabackup-$DATE.tar.gz
+#xtrabackup --user=$MYSQL_U --password=$MYSQL_P --socket=/tmp/mysql.sock --datadir=/data/mysql/ --backup --parallel=2 --stream=tar --target-dir=/home/backup/tmp | gzip - > /home/backup/xtrabackup-$DATE.tar.gz
 
 
-find /home/backup/mysql_bak  -mtime +7 -name "*.gz" -exec rm -f {} \;
+find $backdir  -mtime +7 -name "*.gz" -exec rm -f {} \;
