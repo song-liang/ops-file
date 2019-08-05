@@ -3,3 +3,7 @@ network.host: 0.0.0.0
 
 http.cors.enabled: true
 http.cors.allow-origin: "*"
+
+thread_pool.index.queue_size： 500 
+thread_pool.write.queue_size： 500
+index.max_result_window： 1000000

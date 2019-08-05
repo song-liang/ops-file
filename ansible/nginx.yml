@@ -1,0 +1,55 @@
+- name: Install nginx-1.15
+  hosts: test
+  remote_user: root
+  # remote_user: user
+  # become: yes
+  # become_method: sudo
+  vars:
+    tmp_path: /usr/local/src/             # 远程下载临时目录
+    nginx_package: nginx-1.15.12.tar.gz   # 包名 
+    nginx_tmp_dir: nginx-1.15.12          # 解压后的目录
+
+  tasks:
+  - name: 文件是否存在
+    shell: ls {{nginx_package}}
+    ignore_errors: True
+    register: result
+    args:
+      chdir: "{{ tmp_path }}"
+ 
+  - name: 下载nginx
+    get_url:
+      url: http://nginx.org/download/{{ nginx_package }}
+      dest: "{{tmp_path}}/{{ nginx_package }}"
+    when: result is failed    #如果不存在下载
+    #when: result is succeeded    #如果在
+
+  - name: 解压
+    unarchive:
+      src: "{{tmp_path}}/{{ nginx_package }}"
+      dest: "{{ tmp_path }}"
+
+  - name: 安装依赖包
+    yum: 
+      name: epel-release, libaio, cmake, glibc, gcc, gcc-c++, zlib-devel, pcre, pcre-devel, openssl, openssl-devel, libxslt-devel, gd-devel, GeoIP, GeoIP-devel, GeoIP-data
+      state: latest    
+
+  - name: 编译 nginx
+    shell: ./configure --prefix=/usr/local/nginx --with-http_v2_module  --with-http_dav_module --with-http_addition_module --with-http_realip_module --with-http_geoip_module --with-http_xslt_module --with-http_image_filter_module --with-http_gzip_static_module --with-http_gunzip_module --with-http_sub_module --with-http_stub_status_module  --with-http_auth_request_module --with-http_ssl_module --with-pcre --with-stream --with-stream_realip_module --with-stream_geoip_module --with-stream_ssl_module --with-stream_ssl_preread_module --with-threads
+    args:
+      chdir: "{{tmp_path}}/{{nginx_tmp_dir}}"
+  - name: make nginx
+    shell:  make && make install
+    args:
+      chdir: "{{tmp_path}}/{{nginx_tmp_dir}}"
+
+  - name: 下载启动脚本
+    get_url:
+        url: http://www.apelearn.com/study_v2/.nginx_init
+        dest: /etc/init.d/nginx
+        mode: 0755
+        
+  - name: 启动 nginx
+    service:
+      name: nginx
+      state: started
