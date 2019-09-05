@@ -1,0 +1,35 @@
+version: '3'
+services:
+ redis-server:
+    restart: always
+    image: redis
+    container_name: redis_6379
+    environment:
+        - TZ=Asia/Shanghai
+    volumes:
+        - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        - ./data:/data
+    #network_mode: "host"
+    ports:
+        - "6379:6379"
+    networks:
+        default:
+    sysctls:
+       - net.core.somaxconn=1024
+       - vm.overcommit_memory=1
+
+    command:
+       #redis-server /etc/redis.conf
+       --appendonly yes
+       
+    logging:
+        driver: "json-file"
+        options:
+           max-size: "5M"
+           max-file: "2"
+
+networks:
+  default:
+    external:
+      name: network
+
