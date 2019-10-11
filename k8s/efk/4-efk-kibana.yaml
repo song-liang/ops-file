@@ -1,0 +1,91 @@
+﻿apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  generation: 7
+  labels:
+    app: kibana
+  name: efk-kibana
+  namespace: efk
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: efk-kibana
+          servicePort: 443
+        path: /kibana
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: kibana
+  name: efk-kibana
+  namespace: efk
+spec:
+  ports:
+  - port: 443
+    protocol: TCP
+    targetPort: 5601
+  selector:
+    app: kibana
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  generation: 14
+  labels:
+    app: kibana
+  name: efk-kibana
+  namespace: efk
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: kibana
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: efk-kibana
+            optional: false
+        image: docker.elastic.co/kibana/kibana-oss:6.8.1
+        imagePullPolicy: IfNotPresent
+        name: kibana
+        ports:
+        - containerPort: 5601
+          name: kibana
+          protocol: TCP
+        resources: {}
+      dnsPolicy: ClusterFirst
+      nodeName: node-125
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: efk
+  name: efk-kibana
+  namespace: efk
+data:
+  ELASTICSEARCH_URL: http://efk-elasticsearch:9200
+  LOGGING_VERBOSE: "true"
+  SERVER_BASEPATH: /kibana
+  SERVER_DEFAULTROUTE: /app/kibana
+  SERVER_PORT: "5601"
+

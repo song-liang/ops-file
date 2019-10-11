@@ -1,0 +1,54 @@
+apiVersion: v1
+data:
+  filter_main.conf: |-
+    filter {
+        geoip {
+          source => "client_ip"
+          target => "geoip"
+          database =>"/usr/local/share/GeoIP/GeoLite2-City.mmdb"
+          add_field => [ "[geoip][coordinates]", "%{[geoip][longitude]}" ]
+          add_field => [ "[geoip][coordinates]", "%{[geoip][latitude]}" ]
+        }
+        if "_geoip_lookup_failure" in [tags] { drop { } }
+    }
+  input_main.conf: |-
+    input {
+        tcp {
+            port => 5044
+            type => kong
+            mode => "server"
+            tags => ["tags"]
+            codec => json
+        }
+    }
+  output_main.conf: |-
+    output {
+      stdout { codec => rubydebug }
+      elasticsearch {
+        hosts => ["192.168.31.125:30422"]
+        manage_template => false
+        index => "kong-logs-%{+YYYY.MM.dd}"
+      }
+    }
+kind: ConfigMap
+metadata:
+  labels:
+    app: logstash
+  name: logstash-pipeline
+  namespace: logstash
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: logstash
+  name: logstash-patterns
+  namespace: logstash
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: logstash
+  name: logstash-files
+  namespace: logstash

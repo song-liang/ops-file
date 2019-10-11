@@ -1,0 +1,150 @@
+﻿apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: logstash
+  name: logstash
+  namespace: logstash
+spec:
+  ports:
+  - name: beats
+    port: 5044
+    protocol: TCP
+    targetPort: beats
+  selector:
+    app: logstash
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  generation: 36
+  labels:
+    app: logstash
+  name: logstash
+  namespace: logstash
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: logstash
+  serviceName: logstash
+  template:
+    metadata:
+      labels:
+        app: logstash
+    spec:
+      containers:
+      - env:
+        - name: HTTP_HOST
+          value: 0.0.0.0
+        - name: HTTP_PORT
+          value: "9600"
+        - name: ELASTICSEARCH_HOST
+          value: efk-elasticsearch.efk.svc
+        - name: ELASTICSEARCH_PORT
+          value: "9200"
+        - name: LS_JAVA_OPTS
+          value: -Xmx1g -Xms1g
+        - name: CONFIG_RELOAD_AUTOMATIC
+          value: "true"
+        - name: PATH_CONFIG
+          value: /usr/share/logstash/pipeline
+        - name: PATH_DATA
+          value: /usr/share/logstash/data
+        - name: QUEUE_CHECKPOINT_WRITES
+          value: "1"
+        - name: QUEUE_DRAIN
+          value: "true"
+        - name: QUEUE_MAX_BYTES
+          value: 1gb
+        - name: QUEUE_TYPE
+          value: persisted
+        image: docker.elastic.co/logstash/logstash-oss:6.8.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: monitor
+            scheme: HTTP
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: logstash
+        ports:
+        - containerPort: 9600
+          name: monitor
+          protocol: TCP
+        - containerPort: 5044
+          name: beats
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: monitor
+            scheme: HTTP
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /usr/share/logstash/data
+          name: data
+        - mountPath: /usr/share/logstash/patterns
+          name: patterns
+        - mountPath: /usr/share/logstash/files
+          name: files
+        - mountPath: /usr/share/logstash/pipeline
+          name: pipeline
+        - mountPath: /usr/local/share/GeoIP
+          name: geoip
+      dnsPolicy: ClusterFirst
+      nodeName: node-125
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+      serviceAccount: logstash
+      serviceAccountName: logstash
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: logstash-patterns
+        name: patterns
+      - configMap:
+          defaultMode: 420
+          name: logstash-files
+        name: files
+      - configMap:
+          defaultMode: 420
+          name: logstash-pipeline
+        name: pipeline
+      - hostPath:
+          path: /usr/local/share/GeoIP
+          type: DirectoryOrCreate
+        name: geoip
+  updateStrategy:
+    rollingUpdate:
+      partition: 0
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 2Gi
+      volumeMode: Filesystem

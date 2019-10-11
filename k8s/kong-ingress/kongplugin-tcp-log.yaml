@@ -1,0 +1,10 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  labels:
+    global: "true"
+  name: tcp-log
+config:
+  host: logstash.logstash.svc.cluster.local 
+  port: 5044
+plugin: tcp-log

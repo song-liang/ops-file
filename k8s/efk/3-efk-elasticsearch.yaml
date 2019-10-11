@@ -1,0 +1,83 @@
+﻿apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: elasticsearch
+  name: efk-elasticsearch
+  namespace: efk
+spec:
+  ports:
+  - name: http
+    port: 9200
+    protocol: TCP
+    targetPort: http
+  - name: transport
+    port: 9300
+    protocol: TCP
+    targetPort: transport
+  selector:
+    app: elasticsearch
+  sessionAffinity: None
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  generation: 14
+  labels:
+    app: elasticsearch
+  name: efk-elasticsearch
+  namespace: efk
+spec:
+  podManagementPolicy: Parallel
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: elasticsearch
+  serviceName: efk-elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      containers:
+      - env:
+        - name: ES_JAVA_OPTS
+          value: -Djava.net.preferIPv4Stack=true -Xms512m -Xmx512m
+        - name: cluster.name
+          value: efk-cluster
+        image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.1
+        imagePullPolicy: IfNotPresent
+        name: elasticsearch
+        ports:
+        - containerPort: 9300
+          name: transport
+          protocol: TCP
+        - containerPort: 9200
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /_cluster/health?local=true
+            port: 9200
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
+        volumeMounts:
+        - mountPath: /usr/share/elasticsearch/data
+          name: es-data
+      dnsPolicy: ClusterFirst
+      nodeName: node-125
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: es-data
+        persistentVolumeClaim:
+          claimName: es-data
+  updateStrategy:
+    type: OnDelete

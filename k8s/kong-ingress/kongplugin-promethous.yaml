@@ -1,0 +1,7 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  labels:
+    global: "true"
+  name: prometheus
+plugin: prometheus
