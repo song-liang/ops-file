@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment  
+metadata:  
+  name: jenkins
+  namespace: jenkins
+spec:  
+  replicas: 1  
+  selector:
+    matchLabels:
+      app: jenkins
+  strategy:  
+    type: RollingUpdate  
+    rollingUpdate:  
+      maxSurge: 2  
+      maxUnavailable: 0  
+  template:  
+    metadata:  
+      labels:  
+        app: jenkins  
+    spec:
+      securityContext:
+        fsGroup: 1000
+      serviceAccount: "jenkins-admin"
+      containers:  
+      - args:
+        - --prefix=/jenkins
+        name: jenkins
+        image: jenkinsci/blueocean:latest
+        imagePullPolicy: IfNotPresent  
+        ports:  
+        - containerPort: 8080  
+          name: web  
+          protocol: TCP  
+        - containerPort: 50000  
+          name: agent  
+          protocol: TCP  
+        volumeMounts:  
+        - name: jenkins-data
+          mountPath: /var/jenkins_home
+        env:  
+        - name: JAVA_OPTS  
+          value: "-Duser.timezone=Asia/Shanghai"
+        - name: TRY_UPGRADE_IF_NO_MARKER
+          value: "true"
+      volumes:  
+      - name: jenkins-data
+        nfs:  
+          server: 192.168.31.120
+          path: "/data/db/k8s_pv/jenkins-data"
+
+
+---
+apiVersion: v1  
+kind: Service  
+metadata:  
+  labels:  
+      app: jenkins  
+  name: jenkins
+  namespace: jenkins
+spec:  
+  ports:  
+  - port: 8080  
+    targetPort: 8080  
+    name: web  
+  - port: 50000  
+    targetPort: 50000  
+    name: agent  
+  selector:
+    app: jenkins
+    
+    
+---
+apiVersion: configuration.konghq.com/v1
+kind: KongIngress
+metadata:
+  name: strip-path-false
+  namespace: jenkins
+route:
+  strip_path: false
+---
+apiVersion: extensions/v1beta1  
+kind: Ingress  
+metadata:  
+  annotations:
+    configuration.konghq.com: strip-path-false
+  name: jenkins
+  namespace: jenkins
+spec:  
+  rules:  
+  - host: k8s-demo.com 
+    http:  
+      paths:  
+      - path: /jenkins  
+        backend:  
+          serviceName: jenkins  
+          servicePort: 8080
