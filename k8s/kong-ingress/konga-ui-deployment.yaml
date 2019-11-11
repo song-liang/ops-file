@@ -1,0 +1,133 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    app: konga-ui
+  name: konga-ui
+  namespace: kong
+type: Opaque
+data:
+  db-password: U2l4ZWNvQGtvbmdhLXVp     #  敏感信息 baes64 处理 
+  db-user: a29uZ2E=                     # konga
+  db-host: MTkyLjE2OC4zMS4xMjA=         # 192.168.31.120
+  db-port: MzMwNw==                     # 3307
+  db-name: a29uZ2E=                     # konga
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: konga-ui
+  name: konga-ui
+  namespace: kong
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: konga-ui
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: konga-ui
+    spec:
+      containers:
+      - env:
+        - name: BASE_URL
+          value: /konga/
+        - name: NODE_ENV
+          value: production
+        - name: DB_ADAPTER
+          value: mysql
+        - name: DB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              key: db-name
+              name: konga-ui
+              optional: false
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: db-host
+              name: konga-ui
+              optional: false
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: db-port
+              name: konga-ui
+              optional: false
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: db-user
+              name: konga-ui
+              optional: false
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: db-password
+              name: konga-ui
+              optional: false
+        image: pantsel/konga:latest
+        imagePullPolicy: IfNotPresent
+        name: konga-ui
+        ports:
+        - containerPort: 1337
+          name: web
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 10
+          periodSeconds: 2
+          successThreshold: 2
+          tcpSocket:
+            port: 1337
+          timeoutSeconds: 2
+        resources: {}
+        tty: true
+      dnsPolicy: ClusterFirst
+      nodeName: node-120
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: konga-ui
+  name: konga-ui
+  namespace: kong
+spec:
+  ports:
+  - name: web
+    port: 1337
+    protocol: TCP
+    targetPort: 1337
+  selector:
+    app: konga-ui
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    app: konga-ui
+  name: konga-ui
+  namespace: kong
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: konga-ui
+          servicePort: 1337
+        path: /konga
+

@@ -1,0 +1,6 @@
+apiVersion: configuration.konghq.com/v1   
+kind: KongIngress
+metadata:
+  name: strip-path-false
+route:
+  strip_path: false
