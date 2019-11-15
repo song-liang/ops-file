@@ -61,7 +61,7 @@ spec:
         - configMapRef:
             name: efk-kibana
             optional: false
-        image: docker.elastic.co/kibana/kibana-oss:6.8.1
+        image: docker.elastic.co/kibana/kibana:7.4.0
         imagePullPolicy: IfNotPresent
         name: kibana
         ports:
@@ -71,7 +71,6 @@ spec:
         resources: {}
       dnsPolicy: ClusterFirst
       nodeName: node-125
-      restartPolicy: Always
       schedulerName: default-scheduler
       terminationGracePeriodSeconds: 30
 ---
@@ -83,9 +82,10 @@ metadata:
   name: efk-kibana
   namespace: efk
 data:
-  ELASTICSEARCH_URL: http://efk-elasticsearch:9200
+  ELASTICSEARCH_HOSTS: http://efk-elasticsearch.efk.svc:9200
   LOGGING_VERBOSE: "true"
   SERVER_BASEPATH: /kibana
   SERVER_DEFAULTROUTE: /app/kibana
   SERVER_PORT: "5601"
+  I18N_LOCALE: "zh-CN"
 

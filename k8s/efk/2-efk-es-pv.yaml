@@ -10,26 +10,10 @@ spec:
   claimRef:
     apiVersion: v1
     kind: PersistentVolumeClaim
-    name: es-data
+    name: datadir-efk-elasticsearch-0
     namespace: efk
   nfs:
     path: /home/data/db/k8s_pv/es-data
     server: 192.168.31.120
   persistentVolumeReclaimPolicy: Retain
   volumeMode: Filesystem
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: es-data
-  namespace: efk
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 20Gi
-  storageClassName: ""
-  volumeMode: Filesystem
-  volumeName: es-data
-

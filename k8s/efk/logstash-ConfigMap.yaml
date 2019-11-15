@@ -23,9 +23,9 @@ data:
     }
   output_main.conf: |-
     output {
-      stdout { codec => rubydebug }
+      #stdout { codec => rubydebug }
       elasticsearch {
-        hosts => ["192.168.31.125:30422"]
+        hosts => ["efk-elasticsearch.efk.svc:9200"]
         manage_template => false
         index => "kong-logs-%{+YYYY.MM.dd}"
       }

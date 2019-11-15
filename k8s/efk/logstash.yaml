@@ -4,7 +4,7 @@ metadata:
   labels:
     app: logstash
   name: logstash
-  namespace: logstash
+  namespace: efk
 spec:
   ports:
   - name: beats
@@ -23,7 +23,7 @@ metadata:
   labels:
     app: logstash
   name: logstash
-  namespace: logstash
+  namespace: efk
 spec:
   podManagementPolicy: OrderedReady
   replicas: 1
@@ -43,7 +43,7 @@ spec:
           value: 0.0.0.0
         - name: HTTP_PORT
           value: "9600"
-        - name: ELASTICSEARCH_HOST
+        - name: ELASTICSEARCH_HOSTS
           value: efk-elasticsearch.efk.svc
         - name: ELASTICSEARCH_PORT
           value: "9200"
@@ -63,7 +63,9 @@ spec:
           value: 1gb
         - name: QUEUE_TYPE
           value: persisted
-        image: docker.elastic.co/logstash/logstash-oss:6.8.1
+        - name: XPACK_MONITORING_ELASTICSEARCH_HOSTS
+          value: http://efk-elasticsearch.efk.svc:9200
+        image: docker.elastic.co/logstash/logstash:7.4.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
