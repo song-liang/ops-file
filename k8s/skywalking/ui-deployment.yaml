@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: skywalking-ui
+  name: skywalking-ui
+  namespace: skywalking
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: skywalking-ui
+  template:
+    metadata:
+      labels:
+        app: skywalking-ui
+    spec:
+      containers:
+      - name: skywalking-ui
+        image: apache/skywalking-ui:6.5.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: kywalking-web
+        env:
+        - name: SW_OAP_ADDRESS
+          value: skywalking-oap.skywalking.svc:12800

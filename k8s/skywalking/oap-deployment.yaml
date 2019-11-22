@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: skywalking-oap
+  name: skywalking-oap
+  namespace: skywalking
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: skywalking-oap
+  template:
+    metadata:
+      labels:
+        app: skywalking-oap
+    spec:
+      serviceAccountName: skywalking-oap
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchLabels:
+                  app: skywalking-oap
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app: skywalking-oap
+      containers:
+      - name: skywalking-oap
+        image: apache/skywalking-oap-server:6.5.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 11800
+          name: grpc
+        - containerPort: 12800
+          name: rest
+        env:
+        - name: JAVA_OPTS
+          value: "-Xmx2g -Xms2g"
+        - name: SW_CLUSTER
+          value: kubernetes
+        - name: SW_CLUSTER_K8S_NAMESPACE
+          value: skywalking
+        - name: SW_CLUSTER_K8S_LABEL
+          value: "app=skywalking-oap"
+        - name: SKYWALKING_COLLECTOR_UID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.uid
+        - name: TZ
+          value: Asia/Shanghai
+        - name: SW_STORAGE
+          value: elasticsearch
+        - name: SW_STORAGE_ES_CLUSTER_NODES
+          value: elasticsearch:9200
+        - name: SW_STORAGE_ES_INDEX_SHARDS_NUMBER       # 索引分片
+          value: "2"
+        - name: SW_STORAGE_ES_RECORD_DATA_TTL           # 数据存储时间
+          value: "3"
+        - name: SW_STORAGE_ES_OTHER_METRIC_DATA_TTL     # 其他指标存储时间
+          value: "7"    
+        - name: SW_STORAGE_ES_MONTH_METRIC_DATA_TTL     # 月指标存储时间
+          value: "6"
+        - name: SW_TRACE_SAMPLE_RATE                    # 50%采样，默认为10000，100%采样，根据服务器性能
+          value: "10000"

@@ -1,0 +1,11 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  labels:
+    global: "true"
+  name: zipkin
+config:
+    http_endpoint: http://zipkin.zipkin.svc:9411/api/v2/spans
+    sample_ratio: 1
+    include_credential: true
+plugin: zipkin
