@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-ui
+  namespace: default
+spec:
+  entryPoints:
+    - traefik
+  routes:
+  - match: Host(`traefik.domain.com`)
+    kind: Rule
+    services:
+    - name: api@internal
+      #port: 8080
+
+---

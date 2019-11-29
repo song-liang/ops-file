@@ -1,0 +1,41 @@
+version: '3'
+services:
+
+ server:
+  restart: always
+  image: rancher/k3s:v1.0.0
+  command: server --disable-agent --no-deploy traefik
+  environment:
+    - K3S_CLUSTER_SECRET=somethingtotallyrandom
+    - K3S_KUBECONFIG_OUTPUT=/output/kubeconfig.yaml
+    - K3S_KUBECONFIG_MODE=666
+  volumes:
+    # k3s will generate a kubeconfig.yaml in this directory. This volume is mounted
+    # on your host, so you can then 'export KUBECONFIG=/somewhere/on/your/host/out/kubeconfig.yaml',
+    # in order for your kubectl commands to work.
+    - ./data/out:/output
+    # This directory is where you put all the (yaml) configuration files of
+    # the Kubernetes resources.
+    - ./data/in:/var/lib/rancher/k3s/server/manifests
+  networks:
+    - k3s-net:
+  ports:
+    - 6443:6443
+
+ node:
+  restart: always
+  image: rancher/k3s:v1.0.0
+  privileged: true
+  links:
+    - server
+  environment:
+    - K3S_URL=https://server:6443
+    - K3S_CLUSTER_SECRET=somethingtotallyrandom
+  volumes:
+    # this is where you would place a alternative traefik image (saved as a .tar file with
+    # 'docker save'), if you want to use it, instead of the traefik:v2.0 image.
+    - ./data/custom-image:/var/lib/rancher/k3s/agent/images
+
+
+networks:
+  k3s-net:
