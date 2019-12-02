@@ -185,7 +185,8 @@ case $php_v in
   7.0)
      cd /usr/local/src/
      [ -f ${php_7_0##*/} ] || wget $php_7_0
-     tar zxvf ${php_7_0##*/} &&   cd `echo ${php_7_0##*/}|sed 's/.tar.gz//g'`            
+     tar zxvf ${php_7_0##*/} &&  cd `echo ${php_7_0##*/}|sed 's/.tar.gz//g'`
+     pwd
 	 ##选择php or php-fpm
 	 case $php_ in
 		php)

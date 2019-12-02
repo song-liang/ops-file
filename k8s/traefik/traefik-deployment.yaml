@@ -1,18 +1,14 @@
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  namespace: default
-  name: traefik-ingress-controller
-
----
-kind: Deployment
 apiVersion: apps/v1
+kind: Deployment
 metadata:
   namespace: default
   name: traefik
   labels:
     app: traefik
 spec:
+  strategy:
+    type: Recreate
+  progressDeadlineSeconds: 10
   replicas: 1
   selector:
     matchLabels:
@@ -25,18 +21,20 @@ spec:
       serviceAccountName: traefik-ingress-controller
       containers:
         - name: traefik
-          image: docker.io/library/traefik:v2.1
+          image: docker.io/library/traefik:v2.0
           args:
+            #- --api
+            #- --api.dashboard=true
             - --api.insecure
             - --accesslog
             - --entrypoints.web.Address=:80
             - --entrypoints.websecure.Address=:443
-            - --providers.kubernetescrd
-            - --certificatesresolvers.default.acme.tlschallenge
-            - --certificatesresolvers.default.acme.email=foo@you.com
+            - --providers.kubernetescrd                 # traefik-IngressRoute crd
+            #- --providers.kubernetesingress=true       # k8s ingress
+            - --certificatesresolvers.default.acme.tlschallenge=true
+            - --certificatesresolvers.default.acme.email=123@qq.com
             - --certificatesresolvers.default.acme.storage=acme.json
-            # Please note that this is the staging Let's Encrypt server.
-            # Once you get things working, you should remove that whole line altogether.
+            # Let's Encrypt server.测试证书签发api,正式环境请注释
             - --certificatesresolvers.default.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
           ports:
             - name: web
@@ -47,6 +45,6 @@ spec:
               hostPort: 443
             - name: admin
               containerPort: 8080
-              hostPort: 8080
+              #hostPort: 8080
 
 ---

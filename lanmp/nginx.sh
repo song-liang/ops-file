@@ -6,7 +6,7 @@
 ##
 ##Nginx 版本 1.6，1.8，1.9，下载失败，请修改下载链接
 
-nginx_1_15=http://nginx.org/download/nginx-1.15.12.tar.gz
+nginx_1_17=http://nginx.org/download/nginx-1.17.5.tar.gz
 nginx_1_8=http://nginx.org/download/nginx-1.8.0.tar.gz
 nginx_1_14=https://nginx.org/download/nginx-1.14.0.tar.gz
 
@@ -70,22 +70,22 @@ nginx_configure () {
 ##选择版本
 while :
 do
-  read -p "Please chose the version of Nginx. (1.15|1.8|1.14)" nginx_v
-  if [ "$nginx_x" == "1.15" -o "$nginx_v" == "1.8" -o "$nginx_v == 1.14" ]
+  read -p "Please chose the version of Nginx. (1.17|1.8|1.14)" nginx_v
+  if [ "$nginx_x" == "1.17" -o "$nginx_v" == "1.8" -o "$nginx_v == 1.14" ]
   then
      break
   else
-     echo "only (1.15) or (1.8) or (1.14)"
+     echo "only (1.17) or (1.8) or (1.14)"
   fi
 done
 
 #选择版本安装
 case $nginx_v in
- 	1.15)
+ 	1.17)
 		cd /usr/local/src
-		[ -f ${nginx_1_15##*/} ] || wget $nginx_1_15
-		tar zxvf ${nginx_1_15##*/}
-		cd `echo ${nginx_1_15##*/}|sed 's/.tar.gz//g'`
+		[ -f ${nginx_1_17##*/} ] || wget $nginx_1_17
+		tar zxvf ${nginx_1_17##*/}
+		cd `echo ${nginx_1_17##*/}|sed 's/.tar.gz//g'`
 
 		nginx_configure
 		;; 
@@ -107,6 +107,6 @@ case $nginx_v in
 		nginx_configure
 		;;
 	*)
-		echo "only (1.15) or (1.8) or (1.14)"
+		echo "only (1.17) or (1.8) or (1.14)"
 		;;
 esac

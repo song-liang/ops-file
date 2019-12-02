@@ -1,0 +1,69 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-https
+  namespace: default
+spec:
+  redirectScheme:       # http 重定向 https
+    scheme: https
+---
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: webui-auth
+spec:
+  basicAuth:            # basicAuth 插件认证 
+    secret: webui-auth-secret
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: webui-auth-secret
+  namespace: default
+
+data:
+  users: |              # 使用htpasswd 生成用户名和密码文件，再使用base64对文件加密
+    2h1c2hpemhpXVlOiRhcHIxJE52ZGRQT0RHJEtlRVNzUVI4bTZsdkcxaGxIV0Z2Ri
+
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-webui
+  namespace: default
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`dashboard.demo.com`)
+    kind: Rule
+    services:
+    - name: traefik
+      port: 8080
+    middlewares:  # 使用重定向
+    - name: redirect-https
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-webui-tls
+  namespace: default
+spec:
+  entryPoints:
+  - websecure   # 注意这里是websecure这个entryPoint，监控443端口
+  routes:
+  - match: Host(`dashboard.demo.com`)
+    kind: Rule
+    services:
+    - name: traefik
+      port: 8080
+    middlewares:  # 使用basicAuth认证
+    - name: webui-auth
+
+  tls:
+    certResolver: default  # 使用我们配置的 default 这个解析器
