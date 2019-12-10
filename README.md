@@ -25,6 +25,14 @@
 │      ├── svn-server               # svn 镜像构建
 │      ├── tomcat-images            # tomcat 镜像构建
 │      └── zabbix-docker            # zabbix 利用官方镜像docker-compose
+├── k8s	    kubernetes 下的服务yaml配置文件,ingress 使用的kongingress
+│      ├── ELK
+│      ├── grafana
+│      ├── jenkins
+│      ├── kong-ingress
+│      ├── skywalking
+│      ├── traefix
+│      ├── zipkin
 ├── lanmp
 │      ├── apache.sh                # httpd 编译安装脚本
 │      ├── lanmp1.1.sh              # lanmp 一键编译安装脚本
