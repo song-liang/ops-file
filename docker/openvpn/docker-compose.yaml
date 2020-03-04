@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  pritunl:
+    image: 'pritunl:latest'
+    restart: always
+    container_name: pritunl_server
+    privileged: true
+    environment:
+      - APP.REDIRECT_SERVER=false   #关闭80端口，配置数据库后手动设置才生效
+      - APP.SERVER_PORT=443         #设置web端口
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./pritunl_data:/var/lib/pritunl
+      - ./pritunl.conf:/etc/pritunl.conf
+    #network_mode: "host"
+    ports:
+      - '1443:443'
+      - '1194:1194/udp'
+      - '1194:1194/tcp
+
+  mongo:
+    image: mongo:4.2
+    restart: always
+    container_name: pritunl_mongo
+    #privileged: true
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./mongo_data:/data/db
+    ports:
+        - "27017:27017"
+    command: --storageEngine wiredTiger
+

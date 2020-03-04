@@ -1,0 +1,19 @@
+version: '3.2'
+services:
+  nexus3:
+    restart: always
+    image: sonatype/nexus3
+    container_name: nexus3
+    privileged: true
+    volumes:
+        - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        - ./nexus-data:/nexus-data
+    environment:
+        - NEXUS_CONTEXT=nexus
+    ports:
+        - "10001:8081"
+    networks:
+     nexus:
+
+networks:
+   nexus:
