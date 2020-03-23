@@ -5,6 +5,8 @@
 ```text
 ├── docker  docker-compose启动配置
 │      ├── apollo                   # 携程apollo 配置中心compose文件
+│      ├── etcdkeeper               # etcd webUI
+│      ├── frp                      # frp Dockerfile and compose yaml
 │      ├── elk                      # ELK官方镜像docker-compose
 │      ├── gitlab                   # gitlab 仓库官方镜像docker-compose
 │      ├── gogs                     # 官方镜像docker-compose
