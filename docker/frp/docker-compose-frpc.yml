@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+  frp_client:
+    image: frp:v0.32
+    container_name: frp_client
+    restart: always
+    environment:
+      TZ: Asia/Shanghai
+      SERVICE: frpc 
+    volumes:
+      - ./frpc.ini:/frp/frpc.ini
+      - ./logs:/frp/logs
+    network_mode: "host" 
+

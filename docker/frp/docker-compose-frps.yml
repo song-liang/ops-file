@@ -1,0 +1,17 @@
+version: '2'
+
+services:
+  frp_server:
+    image: frp:v0.32
+    container_name: frp_server
+    restart: always
+    environment:
+      TZ: Asia/Shanghai
+      SERVICE: frps 
+    volumes:
+      - ./frps.ini:/frp/frps.ini
+      - ./logs:/frp/logs
+    network_mode: "host" 
+    ports:
+      - "7000:7000"
+
