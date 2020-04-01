@@ -3,7 +3,7 @@
 
 wget -O /etc/yum.repos.d/docker-ce.repo  https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 
-yum install -y docker-ce
+yum install -y  bash-completion gcc vim lrzsz docker-ce 
 
 mkdir ~/.pip
 cat > ~/.pip/pip.conf << EOF
@@ -12,7 +12,7 @@ trusted-host=mirrors.aliyun.com
 index-url=http://mirrors.aliyun.com/pypi/simple/
 EOF
 
-yum -y install epel-release && yum install -y python-pip && pip install --upgrade pip
+yum -y install epel-release && yum install -y python-pip  python-devel && pip install --upgrade pip
 pip install docker-compose 
 
 mkdir -p /home/docker && ln -s /home/docker /var/lib
