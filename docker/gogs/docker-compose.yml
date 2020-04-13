@@ -5,20 +5,22 @@ services:
     restart: always
     image: mysql
     container_name: mysql
+    #privileged: true
     volumes:
         - /etc/localtime:/etc/localtime:ro
         - /usr/share/zoneinfo:/usr/share/zoneinfo:ro
-        - ./data/:/var/lib/mysql
+        - ./mysql_data/:/var/lib/mysql
         #- ./my.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
-    privileged: true
-    ports:
-        - "3306:3306"
     environment:
         - MYSQL_ROOT_PASSWORD=mysql
         - MYSQL_DATABASE=gogs
         - MYSQL_USER=gogs 
         - MYSQL_PASSWORD=gogs@123
         - TZ=Asia/Shanghai
+    networks:
+        gogs-net:
+    ports:
+        - "3306:3306"
     command:
          --character-set-server=utf8 --collation-server=utf8_general_ci
 
@@ -26,11 +28,22 @@ services:
     restart: always
     image: gogs/gogs
     container_name: gogs
+    #privileged: true
+    depends_on:
+        - mysql
     volumes:
         - /etc/localtime:/etc/localtime:ro
-        - ./data/:/data
+        - ./gogs_data/:/data
         #- ./gogs/conf/app.ini:/data/gogs/conf/app.ini
-    privileged: true
+    environment:
+        - TZ=Asia/Shanghai
+    networks:
+        gogs-net:
     ports:
         - "3022:22"
         - "3000:3000"
+
+networks:
+  gogs-net:
+    external:
+      name: public

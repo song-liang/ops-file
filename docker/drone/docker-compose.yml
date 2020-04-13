@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+  drone-server:
+    restart: always
+    image: drone/drone
+    container_name: drone-server
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      #- ./drone:/data
+    environment:
+      - DRONE_GOGS_SERVER=http://192.168.10.3:10000/        # 代码仓库地址
+      - DRONE_GOGS_SKIP_VERIFY=false                        # TLS 验证
+      - DRONE_GIT_ALWAYS_AUTH=false                         # git 仓库是否为私有模式
+      - DRONE_SERVER_HOST=192.168.10.3
+      - DRONE_SERVER_PROTO=https
+      - DRONE_TLS_AUTOCERT=true
+      - DRONE_RPC_SECRET=d696f5da7d907568619cd5f41dba5ce3
+      - DRONE_USER_CREATE=username:admin,admin:true
+      #- DRONE_DATABASE_DRIVER=sqlite3
+      #- DRONE_DATABASE_DATASOURCE=/data/database.sqlite
+      - DRONE_DATABASE_DRIVER=mysql
+      - DRONE_DATABASE_DATASOURCE=root:password@tcp(mysql:3306)/drone?parseTime=true
+      - DRONE_LOGS_DEBUG=true
+      - TZ=Asia/Shanghai
+    networks:
+        drone-net:
+    ports:
+      - 80:80
+      - 443:443
+
+  drone-runner:
+    restart: always
+    image: drone/drone-runner-docker
+    container_name: drone-runner
+    depends_on:
+        - drone-server
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DRONE_RPC_PROTO=http
+      - DRONE_RPC_HOST=drone-server
+      - DRONE_RPC_SECRET=d696f5da7d907568619cd5f41dba5ce3
+      - DRONE_RUNNER_CAPACITY=2
+      - DRONE_RUNNER_NAME=drone-runner
+    networks:
+        drone-net:
+    ports:
+      - 3001:3000
+
+
+networks:
+  drone-net:
+    external:
+      name: public
