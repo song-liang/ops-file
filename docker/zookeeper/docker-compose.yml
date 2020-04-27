@@ -1,13 +1,11 @@
 version: '3'
 services:
-  zookeeper_01:
+  zookeeper_1:
     image: zookeeper
-    container_name: zookeeper_01
+    container_name: zookeeper_1
     restart: always
     ports:
       - "2181:2181"
-      - "2888"
-      - "3888"
     volumes:
       - ./zoo1/data:/data
       - ./zoo1/datalog:/datalog
@@ -15,16 +13,14 @@ services:
       TZ: Asia/Shanghai
       ZOO_MY_ID: 1
       ZOO_PORT: 2181
-      ZOO_SERVERS: server.1=zookeeper_01:2888:3888 server.2=zookeeper_02:2888:3888 server.3=zookeeper_03:2888:3888
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181 server.2=zookeeper_2:2888:3888;2181 server.3=zookeeper_3:2888:3888;2181
   
-  zookeeper_02:
+  zookeeper_2:
     image: zookeeper
-    container_name: zookeeper_02
+    container_name: zookeeper_2
     restart: always
     ports:
       - "2182:2181"
-      - "2888"
-      - "3888"
     volumes:
       - ./zoo2/data:/data
       - ./zoo2/datalog:/datalog
@@ -32,16 +28,14 @@ services:
       TZ: Asia/Shanghai
       ZOO_MY_ID: 2
       ZOO_PORT: 2181
-      ZOO_SERVERS: server.1=zookeeper_01:2888:3888 server.2=zookeeper_02:2888:3888 server.3=zookeeper_03:2888:3888
+      ZOO_SERVERS: server.1=zookeeper_1:2888:3888;2181 server.2=zookeeper_2:2888:3888;2181 server.3=zookeeper_3:2888:3888;2181
   
-  zookeeper_03:
+  zookeeper_3:
     image: zookeeper
-    container_name: zookeeper_03
+    container_name: zookeeper_3
     restart: always
     ports:
       - "2183:2181"
-      - "2888"
-      - "3888"
     volumes:
       - ./zoo3/data:/data
       - ./zoo3/datalog:/datalog
@@ -49,4 +43,4 @@ services:
       TZ: Asia/Shanghai
       ZOO_MY_ID: 3
       ZOO_PORT: 2181
-      ZOO_SERVERS: server.1=zookeeper_01:2888:3888 server.2=zookeeper_02:2888:3888 server.3=zookeeper_03:2888:3888
+      ZOO_SERVERS: server.1=zookeeper_1:2888:3888;2181 server.2=zookeeper_2:2888:3888;2181 server.3=zookeeper_3:2888:3888;2181
