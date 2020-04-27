@@ -1,0 +1,86 @@
+version: '3'
+services:
+  skywalking-es:
+    restart: always
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.7.2
+    container_name: skywalking-es
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+       default:
+    environment:
+      - "TZ=Asia/Shanghai"
+      - "discovery.type=single-node"
+      #- "ES_JAVA_OPTS=-Xms1G -Xmx1G -XX:NewRatio=1"
+      - thread_pool.index.queue_size=500				# 避免es查询报错
+      - thread_pool.write.queue_size=500
+    volumes:
+      - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+      - ./esdata:/usr/share/elasticsearch/data
+      #- ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+        
+  oap:
+    restart: always
+    image: apache/skywalking-oap-server:6.2.0
+    container_name: oap
+    depends_on:
+      - skywalking-es
+    volumes:
+      - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+      #- ./application.yml:/skywalking/config/application.yml
+    #network_mode: "host"
+    ports:
+      - 11800:11800
+      - 12800:12800
+      - 1234:1234
+    networks:
+      default:
+    environment:
+      TZ: Asia/Shanghai
+      SW_STORAGE: elasticsearch
+      SW_STORAGE_ES_CLUSTER_NODES: skywalking-es:9200	# es推荐集群，减少单机负载
+      SW_STORAGE_ES_INDEX_SHARDS_NUMBER: 1				# 分片，单机设1，减少CPU消耗
+      SW_STORAGE_ES_RECORD_DATA_TTL: 3					# 数据存储时间
+      SW_STORAGE_ES_OTHER_METRIC_DATA_TTL: 7
+      SW_STORAGE_ES_MONTH_METRIC_DATA_TTL: 6
+      #SW_TRACE_SAMPLE_RATE: 5000 						# 50%采样，默认为10000，100%采样，根据服务器性能
+      
+  ui:
+    restart: always
+    image: apache/skywalking-ui:6.2.0
+    container_name: ui
+    depends_on:
+      - oap
+    ports:
+      - 10800:8080
+    networks:
+        default:
+    environment:
+      TZ: Asia/Shanghai
+      SW_OAP_ADDRESS: oap:12800
+      #SECURITY_USER_ADMIN_PASSWORD: admin 			  #6.2 已经取消web用户
+    volumes:
+      - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+
+  skywalking-kibana:
+    image: docker.elastic.co/kibana/kibana:6.8.1
+    container_name: skywalking-kibana
+    environment:
+      TZ: Asia/Shanghai
+      SERVER_NAME: kibana
+      ELASTICSEARCH_HOSTS: http://skywalking-es:9200
+    ports:
+      - 5601:5601
+    networks:
+        default:
+
+
+networks:
+  default:
+    external:
+      name: monitor
