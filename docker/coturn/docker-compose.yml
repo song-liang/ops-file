@@ -1,0 +1,40 @@
+version: "3"
+services:
+
+# Coturn
+  coturn:
+    image: coturn:latest
+    restart: always
+    volumes:
+      - ./turnserver.conf:/usr/local/coturn/etc/turnserver.conf
+      - ./db:/usr/local/coturn/var/db/
+      - ./ssl:/usr/local/coturn/ssl
+      - ./logs:/var/tmp/
+    ports:
+## STUN/TURN
+      - "3478:3478"
+      - "3478:3478/udp"
+      #- "3479:3479"
+      #- "3479:3479/udp"
+      - "8080:8080"
+      - "8080:8080/udp"
+## STUN/TURN SSL
+      - "5349:5349"
+      - "5349:5349/udp"
+      #- "5350:5350"
+      #- "5350:5350/udp"
+      #- "443:443"
+      #- "443:443/udp"
+    networks:
+      - coturn
+    env_file:
+      - ./coturn.env
+      #- mysql/mysql.env
+
+networks:
+  coturn:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.200.0/24
