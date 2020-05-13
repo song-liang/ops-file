@@ -1,14 +1,13 @@
 #!/bin/bash
 ##
-##Ningx一键安装，环境centos7_x64,其他环境未验证
+##tengine一键安装，环境centos7.x x64,其他环境未验证
 ##
-##SongLiang 2020.5.13 修改
+##SongLiang 2020.5.13
 ##
+set 0
 
-nginx_url=https://mirrors.huaweicloud.com/nginx/nginx-1.18.0.tar.gz
-tengine_url=http://tengine.taobao.org/download/tengine-2.3.2.tar.gz
+TENGINE_URL=http://tengine.taobao.org/download/tengine-2.3.2.tar.gz
 BUILD_PATH=/usr/local/src/
-
 
 check_ok () {
 if [ $? != 0 ]
@@ -22,7 +21,7 @@ fi
 yum_package () {
 	yum install -y epel-release gcc  gcc-c++ make pcre pcre-devel zlib zlib-devel openssl-devel libxslt-devel gd-devel GeoIP-devel
 }
-
+ 
 # clone nginx-module-vts
 get_nginx_module_vts () {
 	echo "克隆下载 nginx_module_vts 状态监控插件"
@@ -47,15 +46,6 @@ get_jemalloc () {
 	tar -jxvf ${TENGINE_URL##*/}
 }
 
-# wget nginx
-get_nginx () {
-	cd ${BUILD_PATH}
-	[ -f ${nginx_url##*/} ] || wget ${nginx_url}
-	tar zxvf ${nginx_url##*/}
-	cd `echo ${nginx_url##*/}|sed 's/.tar.gz//g'`
-}
-
-
 # wget tengine
 get_tengine () {
 	cd ${BUILD_PATH}
@@ -64,8 +54,37 @@ get_tengine () {
 	cd `echo ${TENGINE_URL##*/}|sed 's/.tar.gz//g'`
 }
 
-# 备份就nginx 
-bak_nginx() {
+##函数:编译安装与配置
+nginx_configure_make () {
+	./configure \
+	--prefix=/usr/local/nginx \
+	--user=www-data --group=www-data \
+	--with-http_realip_module \
+	--with-http_geoip_module \
+	--with-http_sub_module \
+	--with-http_xslt_module \
+	--with-http_image_filter_module \
+	--with-http_gzip_static_module \
+	--with-http_stub_status_module \
+	--with-http_auth_request_module \
+	--with-http_ssl_module \
+	--with-http_v2_module \
+	--with-pcre \
+	--with-stream \
+	--with-stream_realip_module \
+	--with-stream_geoip_module \
+	--with-stream_ssl_module \
+	--with-stream_ssl_preread_module \
+	--with-jemalloc=../jemalloc-5.2.1 \
+	--add-module=../nginx-module-vts \
+	--add-module=../ngx_brotli
+	check_ok
+	make && make install
+	check_ok
+}
+
+##配置启动文件
+nginx_seting () {
 	if [ -f /etc/init.d/nginx ]
 	then
 		/bin/mv /etc/init.d/nginx  /etc/init.d/nginx_`date +%s`
@@ -74,84 +93,10 @@ bak_nginx() {
 	then
 	    /bin/mv /usr/bin/nginx /usr/bin/nginx_`date +%s`
 	fi
-	if [ -f /usr/local/nginx/sbin/nginx ]
-	then
-	    /bin/mv /usr/local/nginx/sbin/nginx /usr/local/nginx/sbin/nginx_`date +%s`
-	fi
 	if [ -f /lib/systemd/system/nginx.service ]
 	then
 		/bin/mv /lib/systemd/system/nginx.service  /lib/systemd/system/nginx.service_`date +%s`
 	fi
-}
-
-# nginx编译配置
-nginx_configure_make () {
-	./configure \
-	--prefix=/usr/local/nginx \
-	--with-http_v2_module \
-	--with-http_dav_module \
-	--with-http_addition_module \
-	--with-http_realip_module \
-	--with-http_geoip_module \
-	--with-http_xslt_module \
-	--with-http_image_filter_module \
-	--with-http_gzip_static_module \
-	--with-http_gunzip_module \
-	--with-http_sub_module \
-	--with-http_stub_status_module  \
-	--with-http_auth_request_module \
-	--with-http_ssl_module \
-	--with-pcre \
-	--with-stream \
-	--with-stream_realip_module \
-	--with-stream_geoip_module \
-	--with-stream_ssl_module \
-	--with-stream_ssl_preread_module \
-	--with-threads \
-	--add-module=../nginx-module-vts \
-	--add-module=../ngx_brotli
-	check_ok
-	make && make install
-	check_ok
-	ln -s /usr/local/nginx/sbin/nginx /usr/bin
-}
-
-##tengine编译安装与配置
-tengine_configure_make () {
-	./configure \
-	--prefix=/usr/local/nginx \
-	--with-http_v2_module \
-	--with-http_dav_module \
-	--with-http_addition_module \
-	--with-http_realip_module \
-	--with-http_geoip_module \
-	--with-http_xslt_module \
-	--with-http_image_filter_module \
-	--with-http_gzip_static_module \
-	--with-http_gunzip_module \
-	--with-http_sub_module \
-	--with-http_stub_status_module  \
-	--with-http_auth_request_module \
-	--with-http_ssl_module \
-	--with-pcre \
-	--with-stream \
-	--with-stream_realip_module \
-	--with-stream_geoip_module \
-	--with-stream_ssl_module \
-	--with-stream_ssl_preread_module \
-	--with-threads \
-	--with-jemalloc=../jemalloc-5.2.1 \
-	--add-module=../nginx-module-vts \
-	--add-module=../ngx_brotli
-	check_ok
-	make && make install
-	check_ok
-	ln -s /usr/local/nginx/sbin/nginx /usr/bin
-}
-
-
-# 配置启动文件 
-nginx_seting () {
 
 # 配置systcem启动服务
 cat > /lib/systemd/system/nginx.service <<"EOF"
@@ -199,51 +144,20 @@ EOF
 	sed -i '1,5s/#user/user/' /usr/local/nginx/conf/nginx.conf	
 	sed -i '/include brotli;/a\    # nginx-vts\    vhost_traffic_status_zone;\n\    vhost_traffic_status_filter_by_host on;' /usr/local/nginx/conf/nginx.conf
 
+	ln -s /usr/local/nginx/sbin/nginx /usr/bin
+	systemctl enable nginx.service
+ 	systemctl start nginx.service
 }
 
-##选择版本
-while :
-do
-  read -p "Please chose the version of Nginx. (nginx|tengine)" nginx_v
-  if [ "$nginx_v" == "nginx" -o "$nginx_v" == "tengine" ]
-  then
-     break
-  else
-     echo "only (nginx) or (tengine)"
-  fi
-done
 
-#选择版本安装
-case $nginx_v in
- 	nginx)
-	    yum_package
-		get_nginx_module_vts
-		get_ngx_brotli
-		get_nginx
-		bak_nginx
-		nginx_configure_make
-		nginx_seting
+# begin install
 
-		nginx -t
-		systemctl enable nginx.service
- 		systemctl start nginx.service
-		;; 
-  
-	tengine)
-	    yum_package
-		get_jemalloc
-		get_nginx_module_vts
-		get_ngx_brotli
-		get_tengine
-		bak_nginx
-		tengine_configure_make
-		nginx_seting
+cd ${BUILD_PATH}
+yum_package
+get_nginx_module_vts
+get_ngx_brotli
+get_jemalloc
+get_tengine
+nginx_configure_make
+nginx_seting
 
-		nginx -t
-		systemctl enable nginx.service
- 		systemctl start nginx.service
-		;;
-	*)
-		echo "only (nginx) or (tengine)"
-		;;
-esac
