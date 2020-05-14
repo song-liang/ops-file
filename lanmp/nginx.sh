@@ -8,6 +8,7 @@
 nginx_url=https://mirrors.huaweicloud.com/nginx/nginx-1.18.0.tar.gz
 tengine_url=http://tengine.taobao.org/download/tengine-2.3.2.tar.gz
 BUILD_PATH=/usr/local/src/
+BUILD_PREFIX=/usr/local/nginx
 
 
 check_ok () {
@@ -45,6 +46,13 @@ get_jemalloc () {
 	JEMALLOC_URL=https://github.com/jemalloc/jemalloc/releases/download/5.2.1/jemalloc-5.2.1.tar.bz2
 	[ -f ${JEMALLOC_URL##*/} ] || wget ${JEMALLOC_URL}
 	tar -jxvf ${TENGINE_URL##*/}
+}
+
+# wget ngx_log_if
+get_ngx_log_if () {
+	echo "克隆下载 ngx_log_if 日志过滤模块"
+	cd ${BUILD_PATH}
+	git clone https://github.com/cfsego/ngx_log_if
 }
 
 # wget nginx
@@ -87,7 +95,7 @@ bak_nginx() {
 # nginx编译配置
 nginx_configure_make () {
 	./configure \
-	--prefix=/usr/local/nginx \
+	--prefix=${BUILD_PREFIX} \
 	--with-http_v2_module \
 	--with-http_dav_module \
 	--with-http_addition_module \
@@ -109,17 +117,18 @@ nginx_configure_make () {
 	--with-stream_ssl_preread_module \
 	--with-threads \
 	--add-module=../nginx-module-vts \
-	--add-module=../ngx_brotli
+	--add-module=../ngx_brotli \
+	--add-module=../ngx_log_if
 	check_ok
 	make && make install
 	check_ok
-	ln -s /usr/local/nginx/sbin/nginx /usr/bin
+	ln -s ${BUILD_PREFIX}/sbin/nginx /usr/bin
 }
 
 ##tengine编译安装与配置
 tengine_configure_make () {
 	./configure \
-	--prefix=/usr/local/nginx \
+	--prefix=${BUILD_PREFIX} \
 	--with-http_v2_module \
 	--with-http_dav_module \
 	--with-http_addition_module \
@@ -142,11 +151,12 @@ tengine_configure_make () {
 	--with-threads \
 	--with-jemalloc=../jemalloc-5.2.1 \
 	--add-module=../nginx-module-vts \
-	--add-module=../ngx_brotli
+	--add-module=../ngx_brotli \
+	--add-module=../ngx_log_if
 	check_ok
 	make && make install
 	check_ok
-	ln -s /usr/local/nginx/sbin/nginx /usr/bin
+	ln -s ${BUILD_PREFIX}/sbin/nginx /usr/bin
 }
 
 
@@ -173,9 +183,11 @@ PrivateTmp=true
 WantedBy=multi-user.target
 EOF
 
+# user 
+sed -i '1,5s/#user/user/' ${BUILD_PREFIX}/conf/nginx.conf	
 # 添加 brotil 压缩配置
-sed -i '/#gzip/a\    # br压缩\n\    include brotli;' /usr/local/nginx/conf/nginx.conf
-cat > /usr/local/nginx/conf/brotli <<"EOF"
+sed -i '/#gzip/a\    # br压缩\n\    include brotli;' ${BUILD_PREFIX}/conf/nginx.conf
+cat > ${BUILD_PREFIX}/conf/brotli <<"EOF"
     brotli on;					# 开启br压缩
     brotli_comp_level 6;		# 压缩等级 0 -11
     brotli_static on;			# 启用检查客户端是否支持br压缩
@@ -196,8 +208,8 @@ cat > /usr/local/nginx/conf/brotli <<"EOF"
                 text/css text/javascript text/plain text/xml;
 EOF
 
-	sed -i '1,5s/#user/user/' /usr/local/nginx/conf/nginx.conf	
-	sed -i '/include brotli;/a\    # nginx-vts\    vhost_traffic_status_zone;\n\    vhost_traffic_status_filter_by_host on;' /usr/local/nginx/conf/nginx.conf
+# 添加nginx-vts 配置
+sed -i '/include brotli;/a\    # nginx-vts\    vhost_traffic_status_zone;\n\    vhost_traffic_status_filter_by_host on;' ${BUILD_PREFIX}/conf/nginx.conf
 
 }
 
@@ -219,6 +231,7 @@ case $nginx_v in
 	    yum_package
 		get_nginx_module_vts
 		get_ngx_brotli
+		get_ngx_log_if
 		get_nginx
 		bak_nginx
 		nginx_configure_make
@@ -234,6 +247,7 @@ case $nginx_v in
 		get_jemalloc
 		get_nginx_module_vts
 		get_ngx_brotli
+		get_ngx_log_if
 		get_tengine
 		bak_nginx
 		tengine_configure_make

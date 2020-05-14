@@ -24,14 +24,14 @@ yum_package () {
  
 # clone nginx-module-vts
 get_nginx_module_vts () {
-	echo "克隆下载 nginx_module_vts 状态监控插件"
+	echo "克隆下载 nginx_module_vts 状态监控模块"
 	cd ${BUILD_PATH}
 	[ -d nginx-module-vts ] || git clone https://github.com/vozlt/nginx-module-vts.git
 } 
 
 # clone ngx_brotli
  get_ngx_brotli () {
-	echo "克隆下载 ngx_brotli 压缩插件"
+	echo "克隆下载 ngx_brotli 压缩模块"
 	cd ${BUILD_PATH}
 	[ -d ngx_brotli ] || git clone https://github.com/google/ngx_brotli
 	cd ngx_brotli && git submodule update --init
@@ -39,11 +39,18 @@ get_nginx_module_vts () {
 
 # wget jemalloc
 get_jemalloc () {
-	echo "克隆下载 jemalloc 内存优化插件"
+	echo "克隆下载 jemalloc 内存优化模块"
 	cd ${BUILD_PATH}
 	JEMALLOC_URL=https://github.com/jemalloc/jemalloc/releases/download/5.2.1/jemalloc-5.2.1.tar.bz2
 	[ -f ${JEMALLOC_URL##*/} ] || wget ${JEMALLOC_URL}
 	tar -jxvf ${TENGINE_URL##*/}
+}
+
+# wget ngx_log_if
+get_ngx_log_if () {
+	echo "克隆下载 ngx_log_if 日志过滤模块"
+	cd ${BUILD_PATH}
+	git clone https://github.com/cfsego/ngx_log_if
 }
 
 # wget tengine
@@ -77,7 +84,8 @@ nginx_configure_make () {
 	--with-stream_ssl_preread_module \
 	--with-jemalloc=../jemalloc-5.2.1 \
 	--add-module=../nginx-module-vts \
-	--add-module=../ngx_brotli
+	--add-module=../ngx_brotli \
+	--add-module=../ngx_log_if
 	check_ok
 	make && make install
 	check_ok
@@ -157,6 +165,7 @@ yum_package
 get_nginx_module_vts
 get_ngx_brotli
 get_jemalloc
+get_ngx_log_if
 get_tengine
 nginx_configure_make
 nginx_seting
