@@ -1,0 +1,28 @@
+version: '3.2'
+services:
+  nginx-vts-exporter:
+    restart: always
+    image: sophos/nginx-vts-exporter:latest
+    container_name: nginx-vts-exporter
+    environment:
+        NGINX_STATUS: "http://192.168.31.120/status/format/json"
+        METRICS_ENDPOINT: "/metrics"
+        METRICS_ADDR: ":9913"
+    ports:
+        - "9913:9913"
+    networks:
+        default:
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5M"
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.200.0/24
+
