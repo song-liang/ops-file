@@ -4,6 +4,8 @@ services:
 # Coturn
   coturn:
     image: coturn:latest
+    container_name: coturn
+    hostname: coturn
     restart: always
     volumes:
       - ./turnserver.conf:/usr/local/coturn/etc/turnserver.conf
