@@ -6,7 +6,7 @@ services:
      container_name: gitlab-ce
      privileged: true
      ports:
-       - "2022:22"
+       - "2022:2022"
        - "10000:10000"
      networks:
        - gitlab
@@ -20,6 +20,7 @@ services:
          external_url 'https://192.168.31.120:10000/gitlab'
          gitlab_rails['gitlab_shell_ssh_port'] = 2022
          gitlab_rails['time_zone'] = 'Asia/Shanghai'
+         gitlab_rails['gitlab_default_can_create_group'] = false
 
 networks:
    gitlab:

@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  webvirtmgr:
+    restart: always
+    image: webvirtmgr:latest
+    container_name: webvirtmgr
+    volumes:
+      - ./:/srv/webvirtmgr
+      - ./conf/webvirtcloud.ini:/etc/supervisord.d/webvirtcloud.ini
+      - /root/.ssh:/root/.ssh
+      - ./log:/var/log/supervisor 
+    environment:
+      - TZ=Asia/Shanghai
+    command: 
+      supervisord -n -c /etc/supervisord.conf
+    networks:
+        webvirtmgr-net:
+    ports:
+      #- 8000:8000
+      - 6080:6080
+
+  nginx:
+    restart: always
+    image: nginx:latest
+    container_name: webvirtmgr-nginx
+    depends_on:
+        - webvirtmgr
+    volumes:
+      - ./:/var/www/webvirtmgr
+      - ./conf/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./log:/var/log/nginx
+    environment:
+      - TZ=Asia/Shanghai
+    networks:
+        webvirtmgr-net:
+    ports:
+      - 180:80
+
+
+
+networks:
+  webvirtmgr-net:
+    external:
+      name: public

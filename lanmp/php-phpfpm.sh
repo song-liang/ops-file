@@ -8,7 +8,7 @@
 
 php_5_4=http://cn2.php.net/distributions/php-5.4.45.tar.gz
 php_5_6=http://cn.php.net/distributions/php-5.6.37.tar.gz
-php_7_0=http://cn2.php.net/distributions/php-7.3.3.tar.gz
+php_7_0=https://www.php.net/distributions/php-7.4.6.tar.gz
 
 ##选择PHP OR php-fpm
 while :
@@ -137,7 +137,6 @@ phpfpm_configure () {
     --enable-shmop \
     --enable-bcmath \
     --enable-soap \
-    --enable-gd-native-ttf \
     --enable-ftp \
     --enable-mbstring \
     --enable-exif \
