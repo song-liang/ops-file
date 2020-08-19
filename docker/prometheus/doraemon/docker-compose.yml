@@ -1,0 +1,68 @@
+version: '3'
+
+services:
+
+  mysql:
+    image: mysql:5.6.41
+    container_name: doraemon_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      TZ: "Asia/Shanghai"
+    volumes:
+      - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+      - ./mysql_data/:/var/lib/mysql
+    networks:
+      - default
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"
+
+  doraemon-backend:
+    image: 360cloud/alert-gateway:latest
+    container_name: doraemon_alert_gateway
+    restart: always
+    command: ./doraemon
+    environment:
+      GOPATH: "/go"
+      TZ: "Asia/Shanghai"
+    volumes:
+      - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+      - ./conf/app.conf:/opt/doraemon/conf/app.conf
+    depends_on:
+      - mysql
+    networks:
+      - default
+    ports:
+      - "8080:8080"
+
+  doraemon-frontend:
+    image: 360cloud/doraemon-frontend:latest
+    container_name: doraemon_frontend
+    restart: always
+    environment:
+      TZ: "Asia/Shanghai"
+    volumes:
+      - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+      - ./conf/config.js:/usr/local/openresty/nginx/html/config.js
+    depends_on:
+      - doraemon-backend
+    networks:
+      - default
+    ports:
+      - "32000:80"
+
+  ruleengine:
+    image: 360cloud/rule-engine:latest
+    container_name: doraemon_rule_engine
+    restart: always
+    environment:
+      TZ: "Asia/Shanghai"
+    volumes:
+      - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+    depends_on:
+      - doraemon-backend
+    command:
+      - --gateway.url=http://doraemon-backend:8080
+      - --log.level=info
