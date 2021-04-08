@@ -15,7 +15,7 @@ EOF
 yum -y install epel-release && yum install -y python-pip  python-devel && pip install --upgrade pip
 pip install docker-compose 
 
-mkdir -p /home/docker && ln -s /home/docker /var/lib
+#mkdir -p /home/docker && ln -s /home/docker /var/lib
 
 mkdir -p /etc/docker
 tee /etc/docker/daemon.json <<-'EOF'

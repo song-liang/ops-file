@@ -5,6 +5,16 @@ MAINTAINER <song-liangliang@qq.com>
 LABEL Description="php-fpm:5.6"
 
 ## 字符集环境配置
+RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak && \
+ echo deb http://mirrors.aliyun.com/debian/ stretch main non-free contrib > /etc/apt/sources.list && \
+ echo deb-src http://mirrors.aliyun.com/debian/ stretch main non-free contrib >> /etc/apt/sources.list && \
+ echo deb http://mirrors.aliyun.com/debian-security stretch/updates main >> /etc/apt/sources.list && \
+ echo deb-src http://mirrors.aliyun.com/debian-security stretch/updates main >>/etc/apt/sources.list && \
+ echo deb http://mirrors.aliyun.com/debian/ stretch-updates main non-free contrib >>/etc/apt/sources.list && \
+ echo deb-src http://mirrors.aliyun.com/debian/ stretch-updates main non-free contrib >>/etc/apt/sources.list && \
+ echo deb http://mirrors.aliyun.com/debian/ stretch-backports main non-free contrib >>/etc/apt/sources.list  && \
+ echo deb-src http://mirrors.aliyun.com/debian/ stretch-backports main non-free contrib >>/etc/apt/sources.list
+
 RUN apt-get update && apt-get install -y locales \
         && sed -i -e 's/# zh_CN.UTF-8 UTF-8/zh_CN.UTF-8 UTF-8/' /etc/locale.gen \
         && locale-gen \
@@ -25,13 +35,9 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install -j$(nproc) iconv mcrypt \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install mysql \
-    && docker-php-ext-install mysqli \
-    && docker-php-ext-install gettext \
-    && docker-php-ext-install bcmath \
-    && docker-php-ext-install sockets \
-    && docker-php-ext-install ldap \
-	&& apt-get clean
+    && docker-php-ext-install mysql mysqli gettext bcmath sockets ldap zip pcntl \
+    && apt-get clean
+
 
 
 

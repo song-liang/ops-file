@@ -1,0 +1,77 @@
+version: '3.2'
+services:
+  m1:
+    restart: always
+    image: mariadb:10.4
+    container_name: m1
+    hostname: m1
+    #privileged: true
+    volumes:
+        - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        - ./data1/:/var/lib/mysql
+        - ./my1.cnf:/etc/mysql/my.cnf
+    ports:
+        - "3316:3306"
+    networks:
+        db:
+    ulimits:
+      nproc: 65535
+    environment:
+        - MYSQL_ROOT_PASSWORD=mysql
+        #- MYSQL_USER=admin 
+        #- MYSQL_PASSWORD=admin
+        - TZ=Asia/Shanghai
+    command:
+        --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --wsrep-new-cluster
+        #--default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  m2:
+    restart: always
+    image: mariadb:10.4
+    container_name: m2
+    hostname: m2
+    volumes:
+        - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        - ./data2/:/var/lib/mysql
+        - ./my2.cnf:/etc/mysql/my.cnf
+    ports:
+        - "3326:3306"
+    networks:
+        db:
+    ulimits:
+      nproc: 65535
+    environment:
+        - MYSQL_ROOT_PASSWORD=mysql
+        - TZ=Asia/Shanghai
+    command:
+        --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  m3:
+    restart: always
+    image: mariadb:10.4
+    container_name: m3
+    hostname: m3
+    volumes:
+        - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+        - ./data3/:/var/lib/mysql
+        - ./my3.cnf:/etc/mysql/my.cnf
+    ports:
+        - "3336:3306"
+    networks:
+        db:
+    ulimits:
+      nproc: 65535
+    environment:
+        - MYSQL_ROOT_PASSWORD=mysql
+        - TZ=Asia/Shanghai
+    command:
+        --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+
+
+networks:
+  db:
+    external:
+      name: network
+
+
