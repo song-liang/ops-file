@@ -1,0 +1,78 @@
+version: "3"
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    restart: always
+    environment: 
+        LANG: zh_CN.UTF-8
+        KEYCLOAK_USER: admin
+        KEYCLOAK_PASSWORD: admin
+        DB_VENDOR: mysql
+        DB_ADDR: mysql
+        DB_PORT: 3306
+        DB_DATABASE: keycloak
+        DB_USER: keycloak
+        DB_PASSWORD: keycloak
+        KEYCLOAK_FRONTEND_URL: https://k.demo.com/auth
+        PROXY_ADDRESS_FORWARDING: "true"            # 启用代理地址转发
+        KEYCLOAK_STATISTICS: db,http,jgroups      # all 启用所有统计信息
+        PROFILE: preview
+        FEATURE.DOCKER: enabled
+        #KEYCLOAK_LOGLEVEL: DEBUG                    # 日志级别
+        #ROOT_LOGLEVEL: DEBUG
+    networks:
+      default:
+    ports: 
+      - "8080:8080"
+      - "8443:8443"
+
+  ldap-service:
+    image: osixia/openldap
+    restart: always
+    container_name: ldap-service
+    hostname: ldap-service
+    environment:
+        LDAP_ORGANISATION: "demo.com"
+        LDAP_DOMAIN: "demo.com"
+        LDAP_ADMIN_PASSWORD: "demo@123"
+        LDAP_TLS: "false"
+    networks:
+        default:
+    ports:
+        - 389:389
+        - 689:689
+    volumes:
+        - ./ldap_database:/var/lib/ldap
+        - ./ldap_config:/etc/ldap/slapd.d
+    command: 
+        --loglevel debug
+
+  phpldapadmin:
+    image: osixia/phpldapadmin
+    restart: always
+    container_name: phpldapadmin
+    environment: 
+      TZ: "Asia/Shanghai"
+      PHPLDAPADMIN_HTTPS: "true"
+      PHPLDAPADMIN_LDAP_HOSTS: ldap-service
+      #PHPLDAPADMIN_LDAP_HOSTS: "#PYTHON2BASH:[{'ldap-service1': [{'server': [{'tls': 'false'}], 'login': {'bind_id': 'cn=admin,dc=demo,dc=com', 'bind_pass': 'demo@123'}}]}]"
+      #PHPLDAPADMIN_LDAP_HOSTS:
+      #  ldap-service:
+      #    server:
+      #      tls: "false"
+      #      port: 389
+      #    login:
+      #      bind_id: "cn=admin,dc=demo,dc=com"
+      #      bind_pass: "demo@123"
+      
+    networks:
+        default:
+    ports:
+        - 1443:443
+    
+    
+networks:
+  default:
+    external:
+      name: network
