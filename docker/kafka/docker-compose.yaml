@@ -1,0 +1,119 @@
+# kraft集群
+version: "3"
+services:
+  kafka1:
+    image: docker.io/bitnami/kafka:3.5
+    container_name: kafka1
+    restart: always
+    ports:
+      - "9192:9092"
+    volumes:
+      - "./kafka1_data:/bitnami/kafka"
+    environment:
+      # KRaft cluster settings
+      - KAFKA_ENABLE_KRAFT=yes                                                        # 使用kraft，即Kafka替代Zookeeper
+      - KAFKA_KRAFT_CLUSTER_ID=9O-gpe9xScWFDt-cmK1CrA                                 # 使用Kafka时的集群id，存储目录唯一ID
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka1:9093,2@kafka2:9093,3@kafka3:9093  # 集群地址
+      # Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://172.20.10.11:9192                  # 外网访问修改为宿主机ip域名地址和端口
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      # Listener security
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      # _offset_topic or replication
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_CFG_NUM.PARTITIONS=3
+      - KAFKA_CFG_DEFAULT_REPLICATION_FACTOR=3
+      # 最小同步副本数,当 acks = all/-1 时，建议值大于1 且小于replication.factor 副本数
+      - KAFKA_CFG_MIN_INSYNC_REPLICAS=2
+      # 允许自动创建主题，生产可以关闭false
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      # 设置broker最大内存，和初始内存
+      - KAFKA_HEAP_OPTS=-Xmx512M -Xms256M
+
+  kafka2:
+    image: docker.io/bitnami/kafka:3.5
+    container_name: kafka2
+    restart: always
+    ports:
+      - "9292:9092"
+    volumes:
+      - "./kafka2_data:/bitnami/kafka"
+    environment:
+      - TZ=Asia/Shanghai
+      # KRaft cluster settings
+      - KAFKA_ENABLE_KRAFT=yes                                                        # 使用kraft，即Kafka替代Zookeeper
+      - KAFKA_KRAFT_CLUSTER_ID=9O-gpe9xScWFDt-cmK1CrA                                 # 使用Kafka时的集群id，存储目录唯一ID
+      - KAFKA_CFG_NODE_ID=2
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka1:9093,2@kafka2:9093,3@kafka3:9093  # 集群地址
+      # Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://172.20.10.11:9292                  # 外网访问修改为宿主机ip域名地址和端口
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      # Listener security
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      # _offset_topic
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_CFG_NUM.PARTITIONS=3
+      - KAFKA_CFG_DEFAULT_REPLICATION_FACTOR=3
+      # 最小同步副本数,当 acks = all/-1 时，建议值大于1 且小于replication.factor 副本数
+      - KAFKA_CFG_MIN_INSYNC_REPLICAS=2
+      # 允许自动创建主题，生产可以关闭false
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      # 设置broker最大内存，和初始内存
+      - KAFKA_HEAP_OPTS=-Xmx512M -Xms256M
+
+  kafka3:
+    image: docker.io/bitnami/kafka:3.5
+    container_name: kafka3
+    restart: always
+    ports:
+      - "9392:9092"
+    volumes:
+      - "./kafka3_data:/bitnami/kafka"
+    environment:
+      - TZ=Asia/Shanghai
+      # KRaft cluster settings
+      - KAFKA_ENABLE_KRAFT=yes                                                        # 使用kraft，即Kafka替代Zookeeper
+      - KAFKA_KRAFT_CLUSTER_ID=9O-gpe9xScWFDt-cmK1CrA                                 # 使用Kafka时的集群id，存储目录唯一ID
+      - KAFKA_CFG_NODE_ID=3
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka1:9093,2@kafka2:9093,3@kafka3:9093  # 集群地址
+      # Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://172.20.10.11:9392                  # 外网访问修改为宿主机ip域名地址和端口
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      # Listener security
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      # _offset_topic
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_CFG_NUM.PARTITIONS=3
+      - KAFKA_CFG_DEFAULT_REPLICATION_FACTOR=3
+      # 最小同步副本数,当 acks = all/-1 时，建议值大于1 且小于replication.factor 副本数
+      - KAFKA_CFG_MIN_INSYNC_REPLICAS=2
+      # 允许自动创建主题，生产可以关闭false
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      # 设置broker最大内存，和初始内存
+      - KAFKA_HEAP_OPTS=-Xmx512M -Xms256M
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    restart: always
+    ports:
+      - "18080:8080"
+    environment:
+      #DYNAMIC_CONFIG_ENABLED: "true"
+      KAFKA_CLUSTERS_0_NAME: kafka1
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka1:9092,kafka2:9092,kafka3:9092
+      #KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 172.20.10.11:9192,172.20.10.11:9292,172.20.10.11:9392
+    #extra_hosts:
+    #    - "kafka1:172.20.10.11"
+    #    - "kafka2:172.20.10.11"
+    #    - "kafka3:172.20.10.11"
