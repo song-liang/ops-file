@@ -21,6 +21,7 @@
 │      ├── nginx-php                # nginx php-fpm 官方镜像构建docker-compose
 │      ├── pmm                      # pmm 数据库监控，官方镜像 docker-compose
 │      ├── prometheus               # prometheus + grafana 官方镜像docker-compose
+|         └── doraemon              # 360 prometheus告警系统，官方镜像docker-compose
 │      ├── rabbitmq                 # rabbitmq 官方镜像开启UI docker-compose
 │      ├── redis                    # redis 官方镜像docker-compose.包含哨兵，和集群
 │      ├── skywalking               # skywalking hub.docker 镜像+ es docker-compose
