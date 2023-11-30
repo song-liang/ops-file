@@ -1,0 +1,36 @@
+# user:geriit 
+# id:1000
+#
+version: '3'
+
+services:
+  gerrit:
+    #image: gerritcodereview/gerrit
+    image: gerritcodereview/gerrit:3.5.3
+    container_name: gerrit
+    ports:
+      - "29418:29418"
+        #- "8181:8080"
+    networks:
+      default:
+    volumes:
+        #- ./gerrit_data:/var/gerrit
+      - ./gerrit-data/etc:/var/gerrit/etc
+      - ./gerrit-data/data:/var/gerrit/data
+      - ./gerrit-data/git:/var/gerrit/git
+      - ./gerrit-data/db:/var/gerrit/db
+      - ./gerrit-data/events-db:/var/gerrit/events-db
+      - ./gerrit-data/index:/var/gerrit/index
+      - ./gerrit-data/cache:/var/gerrit/cache
+      - ./gerrit-data/lib:/var/gerrit/lib
+      - ./gerrit-data/plugins:/var/gerrit/plugins
+    environment:
+      - CANONICAL_WEB_URL=http://gerrit.demo.com/
+    #command: init
+
+
+networks:
+  default:
+    external:
+      name: network
+

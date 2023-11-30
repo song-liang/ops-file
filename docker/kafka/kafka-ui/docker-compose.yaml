@@ -1,0 +1,24 @@
+version: '3'
+services:
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      # kafka-ui Basic Authentication
+      - AUTH_TYPE="LOGIN_FORM"
+      - SPRING_SECURITY_USER_NAME=admin
+      - SPRING_SECURITY_USER_PASSWORD=password
+      # kafka connection setting
+      - KAFKA_CLUSTERS_0_NAME=kafka1
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=192.168.2.113:9092
+      - KAFKA_CLUSTERS_1_NAME=kafka2
+      - KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS=192.168.2.127:9092,192.168.2.128:9092,192.168.2.129:9092
+      - KAFKA_CLUSTERS_2_NAME=kafka3
+      - KAFKA_CLUSTERS_2_BOOTSTRAPSERVERS=kafka01:9192,kafka02:9292,kafka03:9392
+    extra_hosts:
+        - "kafka01:172.20.10.11"
+        - "kafka02:172.20.10.12"
+        - "kafka03:172.20.10.13"

@@ -1,0 +1,62 @@
+version: "3"
+
+services:
+
+  recursor:
+    image: powerdns/pdns-recursor-47
+    container_name: pdns-recursor
+    environment:
+      - PDNS_RECURSOR_API_KEY
+    ports:
+      - "2053:53"
+      - "2053:53/udp"
+      - "8082:8082"
+
+  # dnsdist:
+  #   image: powerdns/pdns-dnsdist-17
+  #   container_name: pdns-dnsdist
+  #   environment:
+  #     - DNSDIST_API_KEY
+  #   links:
+  #     - recursor
+  #     - auth
+  #   ports:
+  #     - "3053:53"
+  #     - "3053:53/udp"
+  #     - "5199:5199"
+  #     - "8083:8083"
+
+  auth:
+    image: powerdns/pdns-auth-47
+    container_name: pdns-auth
+    environment:
+      - PDNS_AUTH_API_KEY
+    ports:
+      - "1053:53"
+      - "1053:53/udp"
+      - "8081:8081"
+
+
+  powerdns-admin:
+    image: ngoduykhanh/powerdns-admin:latest
+    container_name: powerdns_admin
+    ports:
+      - "9191:80"
+    networks:
+      default:
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m
+    environment:
+      - SQLALCHEMY_DATABASE_URI=mysql://powerdns:powerdns@172.18.0.10:3306/powerdnsadmin
+      - GUNICORN_TIMEOUT=60
+      - GUNICORN_WORKERS=2
+      - GUNICORN_LOGLEVEL=DEBUG
+      - OFFLINE_MODE=False              # True for offline, False for external resources
+
+networks:
+  default:
+    external:
+      name: network
+

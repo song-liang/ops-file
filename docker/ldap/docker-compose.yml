@@ -1,0 +1,49 @@
+version: "3"
+services:
+  ldap-service:
+   image: osixia/openldap
+   restart: always
+   container_name: ldap-service
+   hostname: ldap-service
+   environment:
+       LDAP_ORGANISATION: "demo.com"
+       LDAP_DOMAIN: "demo.com"
+       LDAP_ADMIN_PASSWORD: "demo@123"
+       #LDAP_TLS: "false"
+       LDAP_TLS: "true"
+   networks:
+       default:
+   ports:
+       - 389:389
+       - 639:639
+   volumes:
+       - ./ldap_database:/var/lib/ldap
+       - ./ldap_config:/etc/ldap/slapd.d
+   command: 
+       --loglevel debug
+
+  phpldapadmin:
+    image: osixia/phpldapadmin
+    restart: always
+    container_name: phpldapadmin
+    environment: 
+       - PHPLDAPADMIN_LDAP_HOSTS=ldap-service
+    #PHPLDAPADMIN_LDAP_HOSTS: | 
+    #    - ldap-service:
+    #      - server:
+    #        - tls: false
+    #        - port: 389
+    #      - login:
+    #        - bind_id: cn=admin,dc=demo,dc=com
+    #        - bind_pass: demo@123
+
+    networks:
+        default:
+   #ports:
+     #- 1444:443
+    
+    
+networks:
+  default:
+    external:
+      name: network

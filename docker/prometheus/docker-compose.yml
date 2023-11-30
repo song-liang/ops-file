@@ -10,34 +10,20 @@ services:
       - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - ./prometheus/data:/prometheus
-    ports:
-      - "9090:9090"
+    #ports:
+        #- "9090:9090"
     networks:
       - monitor
-
-  node-exporter:
-    image: prom/node-exporter:latest
-    container_name: node-exporter
-    restart: always
-    environment: 
-      - TZ=Asia/Shanghai
-    volumes:
-      - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
-      - /proc:/host/proc
-      - /sys:/host/sys
-      - /:/rootfs
-      #- ./etc/node_exporter/prom:/node_exporter/prom
-    #ports:
-    #  - '9100:9100'
-    #networks:
-    #    - monitor
-    network_mode: "host"
-    command:
-      - '--path.procfs=/host/proc'
-      - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
-      #- '--collector.textfile.directory=/node_exporter/prom'
-
+    command: |
+      --config.file=/etc/prometheus/prometheus.yml 
+      --storage.tsdb.path=/prometheus 
+      --storage.tsdb.retention.time=30d 
+      --web.console.libraries=/usr/share/prometheus/console_libraries 
+      --web.console.templates=/usr/share/prometheus/consoles 
+      --web.enable-lifecycle 
+      --web.external-url=http://demo.com/prome 
+    extra_hosts:
+        - 'jenkinswh-test.demo.com:10.0.0.42' 
 
   grafana:
     image: grafana/grafana:latest
@@ -45,17 +31,65 @@ services:
     restart: always
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+      - GF_SERVER_ROOT_URL=http:/grafana
       - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_AUTH_LDAP_ENABLED=true
+      - GF_AUTH_LDAP_ALLOW_SIGN_UP=true
+      - GF_AUTH_LDAP_CONFIG_FILE=/etc/grafana/ldap.toml
       - TZ=Asia/Shanghai
     volumes:
       - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
-      #- ./grafana/conf:/etc/grafana/
+        #- ./grafana/conf:/etc/grafana/
+      - ./grafana/conf/ldap.toml:/etc/grafana/ldap.toml
       - ./grafana/data:/var/lib/grafana
       - ./grafana/log:/var/log/grafana
-    ports:
-      - "3000:3000"
+    #ports:
+    #  - "3000:3000"
     networks:
       - monitor
+
+  #    node-exporter:
+  #      image: prom/node-exporter:latest
+  #      container_name: node-exporter
+  #      restart: always
+  #      environment: 
+      #        - TZ=Asia/Shanghai
+      #      volumes:
+      # - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+      #      - /proc:/host/proc
+      #      - /sys:/host/sys
+      #      - /:/rootfs
+      # - ./etc/node_exporter/prom:/node_exporter/prom
+    #ports:
+    #  - '9100:9100'
+    #networks:
+    #    - monitor
+    #    network_mode: "host"
+    #    command:
+    #      - '--path.procfs=/host/proc'
+    #      - '--path.sysfs=/host/sys'
+    #      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+      #- '--collector.textfile.directory=/node_exporter/prom'
+
+ # ssl证书 监控
+  blackbox-exporter:
+    image: prom/blackbox-exporter:master
+    container_name: blackbox-exporter
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+      - ./blackbox-exporter.yml:/config/blackbox.yml
+    #ports:
+        #- "9115:9115"
+    networks:
+      - monitor
+    command: |
+      --config.file=/config/blackbox.yml
+
 
 networks:
   monitor:

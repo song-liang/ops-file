@@ -1,0 +1,22 @@
+version: "3.3"
+services:
+  wordpress:
+    image: wordpress:latest
+    volumes:
+      - ./wordpress_data:/var/www/html
+    ports:
+      - "8000:80"
+    restart: always
+    networks:
+      default:
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress_pass
+      WORDPRESS_DB_NAME: wordpress
+
+networks:
+  default:
+    external:
+      name: network
+

@@ -1,0 +1,39 @@
+version: '3.5'
+
+configs:
+  nginx:
+    external: true
+    name: nginx-config
+
+services:
+  nginx:
+    image: nginx:latest
+    hostname: nginx
+    configs:
+      - source: nginx
+        target: /etc/nginx/nginx.conf
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    depends_on:
+      - minio1
+
+  minio1:
+    image: minio/minio:latest
+    container_name: minio1
+    restart: always
+    volumes:
+      - /data/minio-data:/data
+    expose:
+      - "9000"
+      - "9001"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
