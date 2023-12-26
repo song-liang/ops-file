@@ -1,0 +1,30 @@
+version: '3.2'
+services:
+  happynet-supernode:
+    image: happyn/supernode:latest
+    container_name: happynet-supernode
+    hostname: happyn-supernode
+    restart: always
+    #privileged: true
+    network_mode: "host"
+    #ports:
+    #  - 7654:7654/udp
+    #  - 7654:7654/tcp
+    #  - 127.0.0.1:5645:5645/udp
+    volumes:
+      - ./community.list:/var/supernode/community.list
+    command:
+      /usr/bin/supernode -p 7654 -t 5645 -v -f -c /var/supernode/community.list
+
+  happynet-edge:
+    image: happyn/happynet:latest
+    container_name: happynet-edge
+    hostname: happyn-edge
+    restart: always
+    privileged: true
+    network_mode: "host"
+    volumes:
+      - ./happynet.conf:/etc/happynet.conf
+    command:
+       happynet /etc/happynet.conf -f
+
