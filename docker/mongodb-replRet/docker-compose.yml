@@ -1,0 +1,107 @@
+version: '3'
+services:
+
+  mongo-1:
+    image: mongo:4.4
+    restart: always
+    container_name: mongo-1
+    #privileged: true
+    environment:
+        - TZ=Asia/Shanghai
+          #- MONGO_INITDB_ROOT_USERNAME=dbadmin
+          #- MONGO_INITDB_ROOT_PASSWORD=dbadminpasswd
+        - MONGO_INITDB_DATABASE=demo
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        #- ./mongod.conf.orig;/etc/mongod.conf.orig
+        - ./mongo.keyfile:/data/mongo.keyfile
+        - ./db1:/data/db
+        - ./backup:/data/backup
+        - ./logs:/var/log/mongo
+    networks:
+        mongo:
+    ports:
+        - "27017:27017"
+    command: --auth --keyFile /data/mongo.keyfile --replSet rs01 --oplogSize 1024
+
+  mongo-2:
+    image: mongo:4.4
+    restart: always
+    container_name: mongo-2
+    #privileged: true
+    environment:
+        - TZ=Asia/Shanghai
+          #- MONGO_INITDB_ROOT_USERNAME=dbadmin
+          #- MONGO_INITDB_ROOT_PASSWORD=dbadminpasswd
+        - MONGO_INITDB_DATABASE=demo
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        #- ./mongod.conf.orig;/etc/mongod.conf.orig
+        - ./mongo.keyfile:/data/mongo.keyfile
+        - ./db2:/data/db
+        - ./backup:/data/backup
+        - ./logs:/var/log/mongo
+    networks:
+        mongo:
+    ports:
+        - "27018:27017"
+    command: --auth --keyFile /data/mongo.keyfile --replSet rs01 --oplogSize 1024
+
+  mongo-3:
+    image: mongo:4.4
+    restart: always
+    container_name: mongo-3
+    #privileged: true
+    environment:
+        - TZ=Asia/Shanghai
+          #- MONGO_INITDB_ROOT_USERNAME=dbadmin
+          #- MONGO_INITDB_ROOT_PASSWORD=dbadminpasswd
+        - MONGO_INITDB_DATABASE=demo
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        #- ./mongod.conf.orig;/etc/mongod.conf.orig
+        - ./mongo.keyfile:/data/mongo.keyfile
+        - ./db3:/data/db
+        - ./backup:/data/backup
+        - ./logs:/var/log/mongo
+    networks:
+        mongo:
+    ports:
+        - "27019:27017"
+    command: --auth --keyFile /data/mongo.keyfile --replSet rs01 --oplogSize 1024
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    container_name: mongo_express
+    environment:
+      - TZ=Asia/Shanghai
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=dbadmin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=dbadminpasswd
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_MONGODB_SERVER=mongo
+    networks:
+        mongo:
+    ports:
+      - 8081:8081
+
+  mongodb_exporter:
+    image: percona/mongodb_exporter:0.42
+    restart: always
+    container_name: mongodb_exporter
+    environment:
+      - TZ=Asia/Shanghai
+      - MONGODB_USER=dbadmin
+      - MONGODB_PASSWORD=dbadminpasswd
+    #command: --mongodb.uri=mongodb://mongo:27017 --collect-all --discovering-mode
+    command: --mongodb.uri=mongodb://mongo-1:27017/admin,mongodb://mongo-2:27018/admin,mongodb://mongo-3:27019/admin --collect-all --discovering-mode
+    networks:
+        mongo:
+    ports:
+      - 9216:9216
+
+networks:
+    mongo:
+      #driver: bridge

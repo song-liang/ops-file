@@ -9,11 +9,9 @@ services:
     volumes:
         - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         - ./data01/:/var/lib/mysql
-        #- ./my01.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+        - ./my1.cnf:/etc/mysql/conf.d/mysqld.cnf
     ports:
         - "3306:3306"
-    #links:
-    #    - mysql_master02
     networks:
       mysql:
         ipv4_address: 172.15.0.5
@@ -24,8 +22,8 @@ services:
         #- MYSQL_USER=admin 
         #- MYSQL_PASSWORD=admin
         - TZ=Asia/Shanghai
-    command:
-        --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --replicate-same-server-id=1
+    #command:
+    #    --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone='Asia/Shanghai' --server-id=1
 
   mysql_master02:
     restart: always
@@ -36,19 +34,17 @@ services:
     volumes:
         - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
         - ./data02/:/var/lib/mysql
-        #- ./my02.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+        - ./my2.cnf:/etc/mysql/conf.d/mysqld.cnf
     ports:
         - "3307:3306"
     networks:
       mysql:
         ipv4_address: 172.15.0.6
-    links:
-        - mysql_master01
     environment:
         - MYSQL_ROOT_PASSWORD=mysql
         - TZ=Asia/Shanghai
-    command:
-        --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --replicate-same-server-id=2
+    #command:
+    #    --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone='Asia/Shanghai' --server-id=2
 
 networks:
     mysql:
